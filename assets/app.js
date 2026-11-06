@@ -247,6 +247,33 @@
       <div class="footer-bottom muted small">© ${new Date().getFullYear()} Alto & Co. ${t("footer.rights")} · 🇨🇦 Canada · CAD</div>`;
     renderCartCount();
     renderDrawer();
+    if (!$("#promo").hidden) renderPromo();
+  }
+
+  /* ---------- ventana de código promocional ---------- */
+  function renderPromo() {
+    $("#promo").innerHTML = `
+      <div class="promo-card" role="dialog" aria-modal="true" aria-labelledby="promoTitle">
+        <button class="promo-close" data-promo-close aria-label="${t("promo.close")}">✕</button>
+        <p class="promo-eyebrow">${t("promo.eyebrow")}</p>
+        <h2 id="promoTitle">${t("promo.title")}</h2>
+        <p class="promo-code">${esc(cfg.promo.code)}</p>
+        <button class="promo-copy" data-promo-copy>${t("promo.copy")}</button>
+        <p class="promo-note">${t("promo.note")}</p>
+      </div>`;
+  }
+  function closePromo() {
+    $("#promo").hidden = true;
+    try { sessionStorage.setItem("alto-promo-seen", "1"); } catch { /* modo privado */ }
+  }
+  function schedulePromo() {
+    if (!cfg.promo || !cfg.promo.code) return;
+    try { if (sessionStorage.getItem("alto-promo-seen")) return; } catch { /* modo privado */ }
+    setTimeout(() => {
+      renderPromo();
+      $("#promo").hidden = false;
+      $("#promo .promo-copy").focus();
+    }, cfg.promo.delayMs);
   }
 
   /* ---------- vistas ---------- */
@@ -575,7 +602,20 @@
   /* ---------- eventos globales ---------- */
   $("#cartBtn").addEventListener("click", () => { renderDrawer(); openDrawer(); });
   $("#overlay").addEventListener("click", closeDrawer);
-  document.addEventListener("keydown", (e) => { if (e.key === "Escape") closeDrawer(); });
+  document.addEventListener("keydown", (e) => {
+    if (e.key !== "Escape") return;
+    closeDrawer();
+    if (!$("#promo").hidden) closePromo();
+  });
+  $("#promo").addEventListener("click", async (e) => {
+    if (e.target.id === "promo" || e.target.closest("[data-promo-close]")) return closePromo();
+    const copy = e.target.closest("[data-promo-copy]");
+    if (!copy) return;
+    try {
+      await navigator.clipboard.writeText(cfg.promo.code);
+      copy.textContent = t("promo.copied");
+    } catch { /* el código sigue visible para copiarlo a mano */ }
+  });
   $("#menuBtn").addEventListener("click", () => {
     const open = $("#nav").classList.toggle("open");
     $("#menuBtn").setAttribute("aria-expanded", String(open));
@@ -650,4 +690,5 @@
   renderChrome();
   route();
   loadProducts().then(() => { renderDrawer(); route(); });
+  schedulePromo();
 })();

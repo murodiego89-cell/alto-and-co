@@ -83,6 +83,10 @@ window.I18N = {
     "err.checkout": "Checkout couldn't start. Please try again.",
     "err.signup": "We couldn't save your email. Please try again.",
     "notfound": "Page not found.",
+    "promo.eyebrow": "A welcome from Alto & Co.",
+    "promo.title": "10% off your first order",
+    "promo.note": "Save this code. It works when our store opens.",
+    "promo.copy": "Copy code", "promo.copied": "Copied", "promo.close": "Close",
   },
   fr: {
     "announce": "Partager nos cultures et renforcer le style western",
@@ -167,5 +171,9 @@ window.I18N = {
     "err.checkout": "Le paiement n'a pas pu démarrer. Veuillez réessayer.",
     "err.signup": "Impossible d'enregistrer votre courriel. Veuillez réessayer.",
     "notfound": "Page introuvable.",
+    "promo.eyebrow": "Bienvenue chez Alto & Co.",
+    "promo.title": "10 % de rabais sur votre première commande",
+    "promo.note": "Gardez ce code. Il sera valide à l'ouverture de notre boutique.",
+    "promo.copy": "Copier le code", "promo.copied": "Copié", "promo.close": "Fermer",
   },
 };

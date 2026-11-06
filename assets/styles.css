@@ -417,3 +417,14 @@ h1, h2, h3 { letter-spacing: -.005em; }
       var(--ink);
   }
 }
+
+/* Ventana de código promocional */
+.promo { position: fixed; inset: 0; z-index: 70; display: grid; place-items: center; padding: 16px; background: rgba(20, 18, 15, .45); }
+.promo[hidden] { display: none; }
+.promo-card { position: relative; width: min(420px, 100%); background: var(--accent); color: #fff; text-align: center; padding: 40px 28px 28px; box-shadow: 0 16px 48px rgba(20, 18, 15, .35); }
+.promo-close { position: absolute; top: 8px; right: 8px; width: 40px; height: 40px; background: none; border: 0; color: #fff; font-size: 16px; }
+.promo-eyebrow { margin: 0 0 10px; font-size: 11px; font-weight: 500; letter-spacing: .22em; text-transform: uppercase; }
+.promo-card h2 { margin: 0 0 20px; font-size: clamp(30px, 7vw, 38px); }
+.promo-code { margin: 0 0 14px; padding: 12px; border: 1px dashed #fff; font-size: 22px; font-weight: 600; letter-spacing: .2em; }
+.promo-copy { width: 100%; padding: 14px; background: #fff; color: var(--accent); border: 1px solid #fff; font-size: 11.5px; font-weight: 600; letter-spacing: .18em; text-transform: uppercase; }
+.promo-note { margin: 14px 0 0; font-size: 13px; }

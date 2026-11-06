@@ -31,6 +31,10 @@ window.ALTO_CONFIG = {
   // Mientras esté vacío, los formularios de correo no se muestran.
   signupEndpoint: "",
 
+  // Ventana de código promocional. Deja code vacío para apagarla.
+  // El código debe existir en Shopify > Discounts para que funcione en el checkout.
+  promo: { code: "ALTO10", delayMs: 3000 },
+
   defaultLang: "en", // "en" o "fr"
   contactEmail: "hello@altoandco.ca",
 };
