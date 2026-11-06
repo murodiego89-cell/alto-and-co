@@ -282,11 +282,9 @@
     $("#promo").hidden = true;
     document.body.classList.remove("locked");
     clearInterval(promoTimer);
-    try { sessionStorage.setItem("alto-promo-seen", "1"); } catch { /* modo privado */ }
   }
   function schedulePromo() {
     if (!cfg.promo || !cfg.promo.code) return;
-    try { if (sessionStorage.getItem("alto-promo-seen")) return; } catch { /* modo privado */ }
     setTimeout(() => {
       renderPromo();
       $("#promo").hidden = false;
