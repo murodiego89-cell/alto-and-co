@@ -1,0 +1,62 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Alto & Co. — Western wear for Canada</title>
+  <meta name="description" content="Alto & Co. — Western wear from Los Altos de Jalisco to Canada, shipped coast to coast. Prices in CAD.">
+  <link rel="canonical" href="https://altoandco.ca/">
+  <meta property="og:type" content="website">
+  <meta property="og:site_name" content="Alto & Co.">
+  <meta property="og:title" content="Alto & Co. — Western wear for Canada">
+  <meta property="og:description" content="Western wear from Los Altos de Jalisco to Canada, shipped coast to coast. Prices in CAD.">
+  <meta property="og:url" content="https://altoandco.ca/">
+  <meta property="og:image" content="https://altoandco.ca/assets/logo.png">
+  <meta property="og:locale" content="en_CA">
+  <meta property="og:locale:alternate" content="fr_CA">
+  <meta name="twitter:card" content="summary_large_image">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='18' fill='%237a3b1c'/><text x='50' y='70' font-size='60' text-anchor='middle' fill='%23f6f3ee' font-family='Arial Rounded MT Bold,Arial,sans-serif'>A</text></svg>">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="assets/styles.css">
+</head>
+<body>
+  <div class="demo-banner" id="demoBanner" hidden></div>
+  <div class="announce-bars">
+    <div class="announce announce-1" id="announce"></div>
+    <div class="announce announce-2" id="announce2"></div>
+  </div>
+
+  <header class="header">
+    <div class="header-inner">
+      <button class="icon-btn menu-btn" id="menuBtn" aria-label="Menu" aria-expanded="false">
+        <svg viewBox="0 0 24 24" width="22" height="22"><path d="M3 7h18M3 12h18M3 17h18" stroke="currentColor" stroke-width="1.6" fill="none"/></svg>
+      </button>
+      <nav class="nav" id="nav" aria-label="Main"></nav>
+      <a href="#/" class="logo" aria-label="Alto & Co. home"><img src="assets/logo.png" alt="Alto & Co." width="1400" height="277"></a>
+      <div class="header-actions">
+        <button class="lang-btn" id="langBtn" aria-label="Change language"></button>
+        <button class="icon-btn cart-btn" id="cartBtn" aria-label="Bag">
+          <svg viewBox="0 0 24 24" width="22" height="22"><path d="M6 8h12l-1 12H7L6 8zM9 8V6a3 3 0 0 1 6 0v2" stroke="currentColor" stroke-width="1.6" fill="none"/></svg>
+          <span class="cart-count" id="cartCount" hidden>0</span>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <main id="app" tabindex="-1"></main>
+
+  <footer class="footer" id="footer"></footer>
+
+  <div class="overlay" id="overlay" hidden></div>
+  <aside class="drawer" id="drawer" aria-hidden="true" aria-label="Bag"></aside>
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+  <script src="assets/config.js"></script>
+  <script src="assets/i18n.js"></script>
+  <script src="assets/demo-products.js"></script>
+  <script src="assets/shopify.js"></script>
+  <script src="assets/app.js"></script>
+</body>
+</html>
