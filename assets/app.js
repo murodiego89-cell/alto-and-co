@@ -251,19 +251,37 @@
   }
 
   /* ---------- ventana de código promocional ---------- */
+  let promoTimer;
+  function promoCountdown() {
+    const ms = new Date(cfg.promo.opensAt).getTime() - Date.now();
+    if (!(ms > 0)) return "";
+    const box = (n, label) => `<div><strong>${String(n).padStart(2, "0")}</strong><span>${label}</span></div>`;
+    return box(Math.floor(ms / 864e5), t("promo.days")) +
+      box(Math.floor(ms / 36e5) % 24, t("promo.hours")) +
+      box(Math.floor(ms / 6e4) % 60, t("promo.mins"));
+  }
   function renderPromo() {
+    const count = promoCountdown();
     $("#promo").innerHTML = `
       <div class="promo-card" role="dialog" aria-modal="true" aria-labelledby="promoTitle">
         <button class="promo-close" data-promo-close aria-label="${t("promo.close")}">✕</button>
-        <p class="promo-eyebrow">${t("promo.eyebrow")}</p>
-        <h2 id="promoTitle">${t("promo.title")}</h2>
-        <p class="promo-code">${esc(cfg.promo.code)}</p>
-        <button class="promo-copy" data-promo-copy>${t("promo.copy")}</button>
-        <p class="promo-note">${t("promo.note")}</p>
+        <div class="promo-photo"><img src="${esc(cfg.promo.image)}" alt=""></div>
+        <div class="promo-body">
+          <p class="promo-eyebrow">${t("promo.eyebrow")}</p>
+          <h2 id="promoTitle"><span class="promo-big">${t("promo.big")}</span><span class="promo-sub">${t("promo.sub")}</span></h2>
+          <div class="promo-rule"></div>
+          <p class="promo-text">${t("promo.text")}</p>
+          ${count ? `<p class="promo-label">${t("promo.opens")}</p><div class="promo-count" id="promoCount">${count}</div>` : ""}
+          <p class="promo-code">${esc(cfg.promo.code)}</p>
+          <button class="promo-copy" data-promo-copy>${t("promo.copy")}</button>
+          <p class="promo-trust">${t("promo.trust")}</p>
+        </div>
       </div>`;
   }
   function closePromo() {
     $("#promo").hidden = true;
+    document.body.classList.remove("locked");
+    clearInterval(promoTimer);
     try { sessionStorage.setItem("alto-promo-seen", "1"); } catch { /* modo privado */ }
   }
   function schedulePromo() {
@@ -272,7 +290,12 @@
     setTimeout(() => {
       renderPromo();
       $("#promo").hidden = false;
+      document.body.classList.add("locked");
       $("#promo .promo-copy").focus();
+      promoTimer = setInterval(() => {
+        const el = $("#promoCount");
+        if (el) el.innerHTML = promoCountdown();
+      }, 60000);
     }, cfg.promo.delayMs);
   }
 

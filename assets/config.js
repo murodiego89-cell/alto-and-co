@@ -33,7 +33,13 @@ window.ALTO_CONFIG = {
 
   // Ventana de código promocional. Deja code vacío para apagarla.
   // El código debe existir en Shopify > Discounts para que funcione en el checkout.
-  promo: { code: "ALTO10", delayMs: 3000 },
+  // opensAt: fecha estimada de apertura para la cuenta regresiva. Vacía = sin cuenta regresiva.
+  promo: {
+    code: "ALTO10",
+    delayMs: 3000,
+    opensAt: "2027-06-01T09:00:00-04:00",
+    image: "assets/img/tee-rancher-lifestyle.jpg",
+  },
 
   defaultLang: "en", // "en" o "fr"
   contactEmail: "hello@altoandco.ca",

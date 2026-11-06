@@ -418,13 +418,35 @@ h1, h2, h3 { letter-spacing: -.005em; }
   }
 }
 
-/* Ventana de código promocional */
-.promo { position: fixed; inset: 0; z-index: 70; display: grid; place-items: center; padding: 16px; background: rgba(20, 18, 15, .45); }
+/* Ventana de código promocional: foto a la izquierda, panel café con letras blancas */
+.promo { position: fixed; inset: 0; z-index: 70; display: grid; place-items: center; padding: 16px; background: rgba(20, 18, 15, .55); animation: promo-fade .2s ease-out; }
 .promo[hidden] { display: none; }
-.promo-card { position: relative; width: min(420px, 100%); background: var(--accent); color: #fff; text-align: center; padding: 40px 28px 28px; box-shadow: 0 16px 48px rgba(20, 18, 15, .35); }
-.promo-close { position: absolute; top: 8px; right: 8px; width: 40px; height: 40px; background: none; border: 0; color: #fff; font-size: 16px; }
-.promo-eyebrow { margin: 0 0 10px; font-size: 11px; font-weight: 500; letter-spacing: .22em; text-transform: uppercase; }
-.promo-card h2 { margin: 0 0 20px; font-size: clamp(30px, 7vw, 38px); }
-.promo-code { margin: 0 0 14px; padding: 12px; border: 1px dashed #fff; font-size: 22px; font-weight: 600; letter-spacing: .2em; }
+.promo-card { position: relative; display: grid; grid-template-columns: 38% 1fr; width: min(820px, 100%); max-height: 90vh; overflow-y: auto; background: var(--accent); color: #fff; box-shadow: 0 16px 48px rgba(20, 18, 15, .4); animation: promo-pop .2s ease-out; }
+.promo-photo { min-height: 100%; }
+.promo-photo img { width: 100%; height: 100%; object-fit: cover; object-position: center 30%; }
+.promo-body { padding: 36px 36px 28px; }
+.promo-close { position: absolute; top: 10px; right: 10px; z-index: 1; width: 40px; height: 40px; background: none; border: 0; color: #fff; font-size: 16px; }
+.promo-eyebrow { margin: 0 32px 14px 0; font-size: 11px; font-weight: 500; letter-spacing: .22em; text-transform: uppercase; }
+.promo-card h2 { margin: 0 0 16px; }
+.promo-big { display: block; font-size: clamp(48px, 7vw, 68px); font-weight: 600; line-height: 1; }
+.promo-sub { display: block; margin-top: 8px; font-size: clamp(20px, 3vw, 25px); }
+.promo-rule { width: 48px; height: 2px; margin-bottom: 16px; background: #fff; }
+.promo-text { margin: 0 0 18px; font-size: 14.5px; line-height: 1.6; }
+.promo-label { margin: 0 0 8px; font-size: 11px; letter-spacing: .14em; text-transform: uppercase; }
+.promo-count { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-bottom: 18px; }
+.promo-count div { padding: 8px 6px; background: rgba(255, 255, 255, .14); text-align: center; }
+.promo-count strong { display: block; font-family: var(--serif); font-size: 22px; font-weight: 600; line-height: 1.2; font-variant-numeric: tabular-nums; }
+.promo-count span { display: block; font-size: 9.5px; letter-spacing: .1em; text-transform: uppercase; }
+.promo-code { margin: 0 0 10px; padding: 10px; border: 1px dashed #fff; font-size: 20px; font-weight: 600; letter-spacing: .2em; text-align: center; }
 .promo-copy { width: 100%; padding: 14px; background: #fff; color: var(--accent); border: 1px solid #fff; font-size: 11.5px; font-weight: 600; letter-spacing: .18em; text-transform: uppercase; }
-.promo-note { margin: 14px 0 0; font-size: 13px; }
+.promo-trust { margin: 14px 0 0; font-size: 11.5px; text-align: center; }
+@keyframes promo-fade { from { opacity: 0; } }
+@keyframes promo-pop { from { opacity: 0; transform: scale(.96); } }
+@media (prefers-reduced-motion: reduce) { .promo, .promo-card { animation: none; } }
+@media (max-width: 640px) {
+  .promo-card { grid-template-columns: 1fr; }
+  .promo-photo { height: 150px; min-height: 0; }
+  .promo-photo img { object-position: center 17%; }
+  .promo-body { padding: 24px 22px 20px; }
+  .promo-close { text-shadow: 0 1px 6px rgba(0, 0, 0, .6); }
+}
