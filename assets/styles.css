@@ -300,15 +300,8 @@ h1, h2, h3 { letter-spacing: -.005em; }
 }
 .cart-count[hidden] { display: none; }
 
-/* Our Story */
-.story-title { font-size: clamp(38px, 4.6vw, 64px); line-height: 1.02; letter-spacing: -.015em; margin: 0 0 32px; text-wrap: balance; }
-.story-title em { display: block; font-style: italic; font-weight: 400; color: var(--accent); }
-.story-quote { margin: 36px 0 28px; padding: 4px 0 4px 24px; border-left: 2px solid var(--accent); font-family: var(--serif); font-size: clamp(24px, 2.4vw, 30px); line-height: 1.3; font-style: italic; color: var(--ink); }
 
 
-.story-names { font-family: var(--serif); font-size: 20px; line-height: 1.3; color: var(--ink); }
-.story-names .amp { font-style: italic; color: var(--accent); }
-.story-role { font-size: 11px; letter-spacing: .24em; text-transform: uppercase; color: var(--muted); }
 
 /* Handmade: foto del artesano como fondo del encabezado.
    El velo café oscuro va de izquierda a derecha: texto legible a la izquierda, bota visible a la derecha. */
@@ -381,7 +374,7 @@ h1, h2, h3 { letter-spacing: -.005em; }
 }
 :focus-visible { outline: 2px solid currentColor; outline-offset: 2px; }
 h1, h2, h3 { font-family: var(--display); font-weight: 600; text-transform: uppercase; letter-spacing: .01em; line-height: 1; }
-.hm-hero h1, .hm-pillars h3, .hm-tile-label span, .story-title, .promo-card h2 { font-family: var(--serif); font-weight: 500; text-transform: none; letter-spacing: -.005em; line-height: 1.05; }
+.hm-hero h1, .hm-pillars h3, .hm-tile-label span, .promo-card h2 { font-family: var(--serif); font-weight: 500; text-transform: none; letter-spacing: -.005em; line-height: 1.05; }
 .card-info h3 { text-transform: none; line-height: 1.3; }
 .section-title { font-size: clamp(30px, 3.6vw, 48px); margin: 0; }
 .page-title { font-size: clamp(40px, 6vw, 72px); }
@@ -520,47 +513,74 @@ body.hero-page:not(.scrolled) .header:not(:hover, :focus-within, :has(.nav.open)
 .footer-bottom .pay { margin: 0; }
 .footer-bottom .pay .muted { color: inherit; }
 
-/* Our Story en capítulos: la foto queda fija detrás y el texto sube como un telón.
-   El telón funciona solo con CSS, así que cualquier largo de texto cabe, también en celular. */
-.chapter { --stage-h: calc(100svh - var(--header-h)); position: relative; }
-.chapter-stage { position: sticky; top: var(--header-h); height: var(--stage-h); display: grid; place-items: center; overflow: hidden; padding: 20px var(--gutter); background: var(--ink); }
-.chapter-stage figure { margin: 0; display: flex; flex-direction: column; align-items: center; }
-.chapter-stage img { width: auto; height: auto; max-width: 100%; max-height: calc(var(--stage-h) - 120px); border-radius: 8px; }
-.chapter-stage figcaption { display: flex; flex-direction: column; align-items: center; gap: 4px; margin-top: 14px; text-align: center; }
-.chapter-text { position: relative; z-index: 1; min-height: var(--stage-h); margin-top: calc(-1 * var(--stage-h)); background: var(--bg); box-shadow: 0 18px 40px rgba(20, 13, 9, .35); }
-.chapter-col { max-width: 680px; margin: 0 auto; padding: clamp(40px, 7vh, 80px) var(--gutter) 40px; }
-.chapter-col p { margin: 0 0 20px; font-size: 16.5px; line-height: 1.8; color: var(--muted); }
-.chapter-cue { display: block; margin-top: 44px; text-align: center; font-size: 22px; color: var(--accent); animation: cue 1.8s ease-in-out infinite; }
-@keyframes cue { 50% { transform: translateY(7px); } }
-.chapter-spacer { height: 150svh; } /* 100svh para que el telón termine de subir + 50svh de pausa con la foto completa */
+/* =====================================================================
+   Our Story: cuatro capítulos compactos, todo dentro de .about
+   ===================================================================== */
+.about h2 { margin: 0 0 18px; }
+.about figure { margin: 0; }
+.about .eyebrow { margin-bottom: 12px; }
 
-/* La foto entra con un acercamiento suave cuando el telón empieza a subir */
-.chapter.reveal .chapter-stage img { opacity: .35; transform: scale(1.07); transition: opacity 1.1s ease, transform 1.6s cubic-bezier(.2, .7, .2, 1); }
-.chapter.reveal .chapter-stage figcaption { opacity: 0; transform: translateY(12px); transition: opacity .8s ease .5s, transform .8s ease .5s; }
-.chapter.reveal.is-in .chapter-stage img { opacity: 1; transform: none; }
-.chapter.reveal.is-in .chapter-stage figcaption { opacity: 1; transform: none; }
+/* 1. Portada: banda de texto sobre café oscuro */
+.ab-hero { background: var(--ink); color: #fff; }
+.ab-hero-copy { padding: clamp(36px, 6vh, 56px) var(--gutter) clamp(28px, 5vh, 44px); }
+.ab-hero .eyebrow { color: var(--sand); }
+.ab-hero h1 { margin: 0 0 8px; font-size: clamp(68px, 12vw, 184px); font-weight: 700; line-height: .9; letter-spacing: 0; }
+.ab-hero-sub { margin: 0; font-family: var(--serif); font-size: clamp(22px, 2.5vw, 34px); font-style: italic; line-height: 1.2; color: #f3ead9; text-wrap: balance; }
 
-.story-head { margin-bottom: clamp(30px, 5vh, 52px); text-align: center; }
-.story-head .eyebrow { margin-bottom: 12px; }
-.story-title { margin: 0 0 14px; font-size: clamp(38px, 5vw, 64px); }
-.chapter-col .story-intro { margin: 0; font-size: 17px; text-wrap: balance; }
-.chapter-col .story-lead { font-size: 19px; line-height: 1.7; color: var(--ink); }
-.chapter-col .story-sign { display: flex; align-items: center; gap: 14px; margin: 0; font-size: 11.5px; font-weight: 500; letter-spacing: .26em; text-transform: uppercase; color: var(--accent); }
-.story-sign::before { content: ""; width: 36px; height: 1px; background: var(--accent); }
-.story-names { font-family: var(--serif); font-size: 22px; line-height: 1.25; color: #f3ead9; }
-.story-names .amp { font-style: italic; color: #c9a77c; }
-.story-role { font-size: 11px; letter-spacing: .2em; text-transform: uppercase; color: #c9a77c; }
+/* 2. Fundadores: foto de borde a borde y texto desplazado */
+.ab-founders { display: grid; grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr); gap: clamp(36px, 6vw, 96px); align-items: center; padding: clamp(36px, 6vh, 60px) var(--gutter) clamp(44px, 7vh, 72px) 0; }
+.ab-frame { position: relative; height: clamp(420px, 68vh, 620px); overflow: hidden; background: var(--surface); }
+/* Encuadre cerrado sobre los dos hermanos */
+.ab-frame img { position: absolute; left: -15%; top: -40%; width: 130%; height: 142%; max-width: none; object-fit: cover; object-position: 50% 50%; }
+.ab-founders figcaption { margin-top: 10px; padding-left: var(--gutter); font-family: var(--serif); font-size: 16px; font-style: italic; color: var(--muted); }
+.ab-founders figcaption span { color: var(--accent); }
+.ab-copy { max-width: 540px; }
+.ab-copy p:not(.eyebrow) { margin: 0 0 14px; font-size: 16.5px; line-height: 1.7; color: var(--muted); }
+.ab-founders h2 { font-size: clamp(46px, 5.6vw, 84px); font-weight: 700; line-height: .95; text-wrap: balance; }
+.about .ab-copy p.ab-strong { margin: 22px 0 0; font-family: var(--serif); font-size: clamp(24px, 2.3vw, 30px); font-style: italic; line-height: 1.2; color: var(--accent); }
 
-/* Capítulo de la hermana */
-.chapter-sister .chapter-text { background: #efe8da; }
-.chapter-sister h2 { margin: 0 0 28px; font-family: var(--serif); font-size: clamp(36px, 4.2vw, 56px); font-weight: 500; line-height: 1.06; letter-spacing: -.01em; text-transform: none; text-wrap: balance; }
-.chapter-col .sister-bridge { margin-bottom: 26px; padding-bottom: 22px; border-bottom: 2px solid #5c6346; font-family: var(--serif); font-size: 21px; font-style: italic; line-height: 1.4; color: var(--navy); }
-.chapter-sister .chapter-cue { color: #5c6346; }
+/* 3. Hermana: fondo más cálido y su foto como una impresión de álbum familiar */
+.ab-sister { background: #efe8da; }
+.ab-sister-inner { display: grid; grid-template-columns: minmax(0, 1.15fr) minmax(0, 1fr); gap: clamp(36px, 6vw, 88px); align-items: center; max-width: 1240px; margin: 0 auto; padding: clamp(44px, 7vh, 72px) var(--gutter); }
+.ab-sister .ab-copy { max-width: 620px; }
+.ab-sister h2 { font-family: var(--serif); font-size: clamp(38px, 4.3vw, 60px); font-weight: 500; line-height: 1.04; letter-spacing: -.01em; text-transform: none; text-wrap: balance; }
+.ab-sister .ab-copy p:not(.eyebrow) { margin-bottom: 10px; font-size: 15.5px; line-height: 1.65; }
+.about .ab-copy p.ab-sign { margin: 14px 0 0; font-family: var(--serif); font-size: clamp(22px, 2vw, 26px); font-style: italic; line-height: 1.25; color: var(--navy); }
+.ab-print { justify-self: center; width: min(100%, 430px); border-radius: 6px; box-shadow: 0 22px 44px rgba(42, 29, 22, .26); transform: rotate(1.4deg); transition: transform .6s cubic-bezier(.2, .7, .2, 1); }
+.ab-print:hover { transform: rotate(0); }
+.ab-print img { width: 100%; height: auto; border-radius: 6px; }
+.ab-gallery { margin-top: 22px !important; }
+.ab-gallery > div { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
+.ab-gallery span { display: block; aspect-ratio: 1 / 1; overflow: hidden; border-radius: 4px; background: var(--surface); }
+.ab-gallery img { width: 100%; height: 100%; object-fit: cover; transform: scale(var(--z, 1)); transition: transform .8s cubic-bezier(.2, .7, .2, 1); }
+.ab-gallery span:hover img { transform: scale(calc(var(--z, 1) * 1.05)); }
+.ab-gallery figcaption { margin-top: 8px; font-size: 11px; letter-spacing: .18em; text-transform: uppercase; color: var(--muted); }
 
-/* Cierre */
-.story-close { padding: clamp(64px, 10vw, 128px) var(--gutter); background: var(--bg); text-align: center; }
-.story-close p { max-width: 720px; margin: 0 auto 26px; font-family: var(--serif); font-size: clamp(30px, 3.6vw, 46px); font-style: italic; line-height: 1.2; color: var(--navy); text-wrap: balance; }
-.story-close img { width: 200px; height: auto; margin: 0 auto 34px; mix-blend-mode: multiply; filter: brightness(1.06) contrast(1.15); }
+/* Los tres hermanos: el dibujo original como una hoja de papel, sin marcos ni retoques */
+.ab-siblings { display: grid; grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr); gap: clamp(36px, 6vw, 88px); align-items: center; max-width: 1240px; margin: 0 auto; padding: clamp(48px, 8vh, 80px) var(--gutter); }
+.ab-paper { box-shadow: 0 1px 2px rgba(42, 29, 22, .12), 0 16px 34px rgba(42, 29, 22, .14); }
+.ab-paper img { width: 100%; height: auto; }
+.ab-siblings h2 { font-family: var(--serif); font-size: clamp(32px, 3.4vw, 46px); font-weight: 500; line-height: 1.08; letter-spacing: -.01em; text-transform: none; text-wrap: balance; }
+.ab-siblings .ab-copy p { margin-bottom: 10px; font-size: 15.5px; line-height: 1.65; }
+
+/* 4. Cierre */
+.ab-close { position: relative; overflow: hidden; background: var(--ink); color: #f3ead9; text-align: center; }
+.ab-close > img { position: absolute; left: 0; top: -7%; width: 100%; height: 114%; object-fit: cover; object-position: 50% 45%; }
+.ab-close::after { content: ""; position: absolute; inset: 0; background: rgba(24, 16, 11, .76); }
+.ab-close-copy { position: relative; z-index: 1; padding: clamp(48px, 8vh, 76px) var(--gutter); }
+.ab-close h2 { margin-bottom: 10px; font-size: clamp(44px, 6.4vw, 96px); font-weight: 700; line-height: .95; }
+.ab-close p { max-width: 560px; margin: 0 auto 22px; font-family: var(--serif); font-size: clamp(20px, 2vw, 25px); font-style: italic; line-height: 1.3; }
+.ab-close-copy img { width: 190px; height: auto; margin: 0 auto 24px; }
+
+/* Movimiento: solo se activa con .animate, que JS añade antes de pintar */
+.ab-line { display: block; overflow: hidden; }
+.ab-line > span { display: block; }
+.animate .ab-line > span { transform: translateY(104%); transition: transform 1s cubic-bezier(.16, 1, .3, 1); }
+.animate .ab-line.in > span { transform: none; }
+.animate .rv { opacity: 0; transform: translateY(20px); transition: opacity .8s ease var(--d, 0s), transform .8s cubic-bezier(.2, .7, .2, 1) var(--d, 0s); }
+.animate .rv.in { opacity: 1; transform: none; }
+.animate .rv-clip { opacity: 0; clip-path: inset(0 0 32% 0); transition: opacity .7s ease, clip-path 1.1s cubic-bezier(.16, 1, .3, 1); }
+.animate .rv-clip.in { opacity: 1; clip-path: inset(0); }
 
 @media (max-width: 1024px) {
   :root { --header-h: 64px; }
@@ -590,18 +610,19 @@ body.hero-page:not(.scrolled) .header:not(:hover, :focus-within, :has(.nav.open)
   .banner img { object-position: 62% center; }
   .banner::after { background: linear-gradient(0deg, rgba(20, 13, 9, .94) 0, rgba(20, 13, 9, .7) 48%, rgba(20, 13, 9, .05) 78%); }
   .home-story { grid-template-columns: 1fr; }
-  .chapter-col .story-lead { font-size: 17.5px; }
-  .chapter-col p { font-size: 16px; }
-  .chapter-stage img { max-height: calc(var(--stage-h) - 150px); }
-  .story-names { font-size: 18px; }
-  .story-role { font-size: 10px; }
+  .ab-founders { grid-template-columns: 1fr; gap: 22px; padding: 28px 0 40px; }
+  .ab-frame { height: auto; aspect-ratio: 4 / 3; }
+  .ab-frame img { left: -32.5%; top: -46%; width: 165%; height: 147%; }
+  .ab-founders .ab-copy { padding: 0 var(--gutter); }
+  .ab-sister-inner { grid-template-columns: 1fr; gap: 30px; padding-top: 40px; padding-bottom: 44px; }
+  .ab-print { order: -1; width: min(82%, 340px); }
+  .ab-siblings { grid-template-columns: 1fr; gap: 28px; padding-top: 44px; padding-bottom: 44px; }
+  .ab-close-copy { padding-top: 52px; padding-bottom: 52px; }
   .footer-inner { grid-template-columns: 1fr 1fr; }
   .footer-bottom { flex-direction: column; align-items: flex-start; }
 }
 @media (prefers-reduced-motion: reduce) {
   .soon-dot { animation: none; }
-  .chapter-cue { animation: none; }
-  .chapter.reveal .chapter-stage img, .chapter.reveal .chapter-stage figcaption { opacity: 1; transform: none; transition: none; }
   .announce { animation: none; }
   .announce-2 { display: none; }
 }

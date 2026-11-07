@@ -357,16 +357,43 @@
     v.play().catch(sync); // modo ahorro de batería: se queda el poster y el botón ofrece reproducir
   }
 
-  function mountStory() {
-    document.querySelectorAll(".chapter").forEach((ch) => {
-      ch.classList.add("reveal");
-      const io = new IntersectionObserver(([e]) => {
-        if (!e.isIntersecting) return;
-        ch.classList.add("is-in");
-        io.disconnect();
-      }, { rootMargin: "0px 0px -20% 0px" });
-      io.observe($(".chapter-spacer", ch));
+  /* Our Story: entradas suaves y parallax ligero. Sin JS o con movimiento reducido, todo se ve desde el inicio */
+  const parallax = { els: [], ticking: false };
+  function runParallax() {
+    parallax.ticking = false;
+    const vh = window.innerHeight;
+    parallax.els.forEach((el) => {
+      const box = el.parentElement.getBoundingClientRect();
+      if (box.bottom < 0 || box.top > vh) return;
+      const p = (box.top + box.height / 2 - vh / 2) / (vh / 2 + box.height / 2);
+      el.style.transform = `translate3d(0, ${(p * box.height * -0.06).toFixed(1)}px, 0)`;
     });
+  }
+  function queueParallax() {
+    if (!parallax.els.length || parallax.ticking) return;
+    parallax.ticking = true;
+    requestAnimationFrame(runParallax);
+  }
+  window.addEventListener("scroll", queueParallax, { passive: true });
+  window.addEventListener("resize", queueParallax, { passive: true });
+
+  function mountStory() {
+    parallax.els = [];
+    const root = $(".about");
+    if (!root || matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+    root.classList.add("animate");
+    const io = new IntersectionObserver((entries) => {
+      entries.forEach((e) => {
+        if (!e.isIntersecting) return;
+        e.target.classList.add("in");
+        io.unobserve(e.target);
+      });
+    }, { threshold: 0.12, rootMargin: "0px 0px -6% 0px" });
+    root.querySelectorAll(".rv, .rv-clip, .ab-line").forEach((el) => io.observe(el));
+    if (matchMedia("(min-width: 761px)").matches) {
+      parallax.els = [...root.querySelectorAll("[data-parallax]")];
+      runParallax();
+    }
   }
 
   function mountRails() {
@@ -638,56 +665,74 @@
       </section>`;
   }
 
-  // "Our Story": la última frase del título va en cursiva, igual que en la portada
-  const italicLast = (s) => {
-    const parts = s.split(/(?<=\.)\s+/);
-    return parts.length > 1 ? `${parts.slice(0, -1).join(" ")} <em>${parts[parts.length - 1]}</em>` : s;
-  };
-  // Cada capítulo: la foto queda fija detrás y el texto sube como un telón para revelarla
-  const chapter = (name, photo, text) => `
-    <section class="chapter chapter-${name}">
-      <div class="chapter-stage">${photo}</div>
-      <div class="chapter-text"><div class="chapter-col">${text}
-        <span class="chapter-cue" aria-hidden="true">↓</span>
-      </div></div>
-      <div class="chapter-spacer"></div>
-    </section>`;
+  const viewAbout = () => `
+    <div class="about">
+      <section class="ab-hero">
+        <div class="ab-hero-copy">
+          <p class="eyebrow rv">${t("about.hero.eyebrow")}</p>
+          <h1><span class="ab-line"><span>${t("about.eyebrow")}</span></span></h1>
+          <p class="ab-hero-sub rv" style="--d:.25s">${t("about.hero.sub")}</p>
+        </div>
+      </section>
 
-  const viewAbout = () => chapter("family", `
-      <figure>
-        <img src="assets/img/founders.jpg" alt="${t("about.foundersAlt")}" width="1536" height="1024">
-        <figcaption>
-          <span class="story-names">Diego A. Muro de la Torre <span class="amp">&amp;</span> Aldo E. Muro de la Torre</span>
-          <span class="story-role">${t("about.foundersRole")}</span>
-        </figcaption>
-      </figure>`, `
-      <div class="story-head">
-        <p class="eyebrow">${t("about.eyebrow")}</p>
-        <h1 class="story-title">${italicLast(t("about.title"))}</h1>
-        <p class="story-intro">${t("about.intro")}</p>
-      </div>
-      <p class="story-lead">${t("about.p1")}</p>
-      <p>${t("about.p2")}</p>
-      <p>${t("about.p3")}</p>
-      <blockquote class="story-quote">${t("about.p4")}</blockquote>
-      <p class="story-sign">${t("about.sign")}</p>`) + chapter("sister", `
-      <figure>
-        <img src="assets/img/hermana-alto-co.jpg" alt="${t("about.sister.alt")}" width="1086" height="1448" loading="lazy">
-        <figcaption>
-          <span class="story-names">${t("about.sister.name")}</span>
-          <span class="story-role">${t("about.sister.role")}</span>
-        </figcaption>
-      </figure>`, `
-      <p class="sister-bridge">${t("about.bridge")}</p>
-      <h2>${t("about.sister.title")}</h2>
-      <p>${t("about.sister.p1")}</p>
-      <p>${t("about.sister.p2")}</p>
-      <p>${t("about.sister.p3")}</p>`) + `
-    <section class="story-close">
-      <p>${t("about.sister.sign")}</p>
-      <img src="assets/logo.png" alt="Alto & Co." width="1400" height="277" loading="lazy">
-      <a class="btn" href="#/shop">${t("about.cta")}</a>
-    </section>`;
+      <section class="ab-founders">
+        <figure>
+          <div class="ab-frame rv-clip"><img data-parallax src="assets/img/founders.jpg" alt="${t("about.foundersAlt")}" width="1536" height="1024" fetchpriority="high"></div>
+          <figcaption>Diego A. Muro de la Torre <span>&amp;</span> Aldo E. Muro de la Torre</figcaption>
+        </figure>
+        <div class="ab-copy">
+          <p class="eyebrow rv">${t("about.foundersRole")}</p>
+          <h2 class="rv" style="--d:.08s">${t("about.founders.title")}</h2>
+          <p class="rv" style="--d:.16s">${t("about.p1")}</p>
+          <p class="rv" style="--d:.22s">${t("about.p2")}</p>
+          <p class="ab-strong rv" style="--d:.28s">${t("about.p3")}</p>
+        </div>
+      </section>
+
+      <section class="ab-sister">
+        <div class="ab-sister-inner">
+          <div class="ab-copy">
+            <p class="eyebrow rv">${t("about.sister.name")}</p>
+            <h2 class="rv" style="--d:.08s">${t("about.sister.title")}</h2>
+            <p class="rv" style="--d:.16s">${t("about.sister.p1")}</p>
+            <p class="rv" style="--d:.2s">${t("about.sister.p2")}</p>
+            <p class="rv" style="--d:.24s">${t("about.sister.p3")}</p>
+            <p class="ab-sign rv" style="--d:.28s">${t("about.sister.sign")}</p>
+            <figure class="ab-gallery rv" style="--d:.1s">
+              <div>
+                ${[
+                  ["cap-rider.jpg", "about.gallery.cap", "50% 40%", 1.12],
+                  ["tee-heritage-back.jpg", "about.gallery.tee", "50% 36%", 1.5],
+                  ["tee-rancher-lifestyle.jpg", "about.gallery.rancher", "50% 76%", 1.7],
+                ].map(([f, alt, pos, z]) => `<span><img src="assets/img/${f}" alt="${t(alt)}" loading="lazy" style="object-position:${pos};--z:${z}"></span>`).join("")}
+              </div>
+              <figcaption>${t("about.gallery.caption")}</figcaption>
+            </figure>
+          </div>
+          <div class="ab-print"><div class="rv-clip"><img src="assets/img/hermana-alto-co.jpg" alt="${t("about.sister.alt")}" width="900" height="1200" loading="lazy"></div></div>
+        </div>
+      </section>
+
+      <section class="ab-siblings">
+        <div class="ab-paper"><div class="rv-clip"><img src="assets/img/hermanos-dibujo.jpg" alt="${t("about.siblings.alt")}" width="1486" height="1059" loading="lazy"></div></div>
+        <div class="ab-copy">
+          <h2 class="rv">${t("about.siblings.title")}</h2>
+          <p class="rv" style="--d:.1s">${t("about.siblings.p1")}</p>
+          <p class="rv" style="--d:.16s">${t("about.siblings.p2")}</p>
+          <p class="rv" style="--d:.22s">${t("about.siblings.p3")}</p>
+        </div>
+      </section>
+
+      <section class="ab-close">
+        <img data-parallax src="assets/img/handmade-boot-artisan.jpg" alt="" width="1920" height="1080" loading="lazy">
+        <div class="ab-close-copy">
+          <h2><span class="ab-line"><span>${t("about.sign")}</span></span></h2>
+          <p class="rv" style="--d:.15s">${t("about.close.text")}</p>
+          <img class="rv" style="--d:.22s" src="assets/logo-light.png" alt="Alto & Co." width="800" height="158" loading="lazy">
+          <a class="btn btn-light rv" style="--d:.28s" href="#/shop">${t("about.cta")}</a>
+        </div>
+      </section>
+    </div>`;
 
   const viewHelp = () => `
     <section class="section prose">
