@@ -65,7 +65,7 @@ window.Shopify = (() => {
   }
 
   async function getProducts(lang) {
-    const language = lang === "fr" ? "FR" : "EN";
+    const language = lang.toUpperCase();
     const all = [];
     let cursor = null;
     do {
@@ -89,7 +89,7 @@ window.Shopify = (() => {
         }
       }`,
       {
-        language: lang === "fr" ? "FR" : "EN",
+        language: lang.toUpperCase(),
         input: {
           lines: lines.map((l) => ({ merchandiseId: l.variantId, quantity: l.qty })),
           buyerIdentity: { countryCode: "CA" },

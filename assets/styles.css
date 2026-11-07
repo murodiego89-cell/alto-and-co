@@ -413,6 +413,8 @@ h1, h2, h3 { font-family: var(--display); font-weight: 600; text-transform: uppe
 .nav-item > a:hover { color: inherit; }
 .lang-btn { border-color: currentColor; background: none; color: inherit; font-weight: 500; }
 .icon-btn, .lang-btn { color: inherit; }
+.lang-btn { font-family: var(--sans); cursor: pointer; }
+.lang-btn option { color: var(--ink); background: #fff; }
 .cart-count { background: var(--accent); color: #fff; }
 
 /* Sobre el video el encabezado es transparente; al bajar, pasar el cursor o abrir algo se vuelve sólido */

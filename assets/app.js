@@ -17,8 +17,10 @@
     },
   };
 
+  const LOCALES = { en: "en-CA", fr: "fr-CA", es: "es-MX" };
+
   const state = {
-    lang: store.get("alto-lang", cfg.defaultLang) === "fr" ? "fr" : "en",
+    lang: LOCALES[store.get("alto-lang", cfg.defaultLang)] ? store.get("alto-lang", cfg.defaultLang) : "en",
     products: [],
     loaded: false,
     error: false,
@@ -31,7 +33,7 @@
     return s;
   }
   const money = (n) =>
-    new Intl.NumberFormat(state.lang === "fr" ? "fr-CA" : "en-CA", { style: "currency", currency: "CAD" }).format(n);
+    new Intl.NumberFormat(LOCALES[state.lang], { style: "currency", currency: "CAD" }).format(n);
   const catLabel = (c) => (I18N[state.lang][`cat.${c}`] ? t(`cat.${c}`) : c);
   const optLabel = (o) => (I18N[state.lang][`opt.${o}`] ? t(`opt.${o}`) : o);
 
@@ -212,15 +214,16 @@
   const categories = () => [...new Set(["Women", "Men", "Accessories", "Handmade", ...state.products.map((p) => p.category)])];
 
   function renderChrome() {
-    document.documentElement.lang = state.lang === "fr" ? "fr-CA" : "en-CA";
-    const wholeDollars = new Intl.NumberFormat(state.lang === "fr" ? "fr-CA" : "en-CA",
+    document.documentElement.lang = LOCALES[state.lang];
+    const wholeDollars = new Intl.NumberFormat(LOCALES[state.lang],
       { style: "currency", currency: "CAD", currencyDisplay: "narrowSymbol", maximumFractionDigits: 0 }).format(cfg.freeShippingThreshold);
     $("#announce").textContent = t("announce");
     $("#announce2").textContent = t("announce2", { amount: wholeDollars });
     const demo = $("#demoBanner");
     demo.hidden = Shopify.enabled;
     demo.textContent = t("demo.banner");
-    $("#langBtn").textContent = state.lang === "fr" ? "EN" : "FR";
+    $("#langSel").value = state.lang;
+    $("#langSel").setAttribute("aria-label", t("lang.label"));
     $("#cartBtn").setAttribute("aria-label", t("cart"));
     $("#searchBtn").setAttribute("aria-label", t("search.label"));
     $("#searchLabel").textContent = t("search.label");
@@ -281,7 +284,7 @@
         </div>
       </div>
       <div class="footer-bottom small">
-        <span>© ${new Date().getFullYear()} Alto & Co. ${t("footer.rights")} · 🇨🇦 Canada · CAD</span>
+        <span>© ${new Date().getFullYear()} Alto & Co. ${t("footer.rights")} · 🇨🇦 ${t("footer.country")} · CAD</span>
         ${payIcons()}
       </div>`;
     renderCartCount();
@@ -870,8 +873,8 @@
     const open = $("#nav").classList.toggle("open");
     $("#menuBtn").setAttribute("aria-expanded", String(open));
   });
-  $("#langBtn").addEventListener("click", async () => {
-    state.lang = state.lang === "fr" ? "en" : "fr";
+  $("#langSel").addEventListener("change", async (e) => {
+    state.lang = e.target.value;
     store.set("alto-lang", state.lang);
     renderChrome();
     if (Shopify.enabled) await loadProducts(); // nombres/descripciones traducidos desde Shopify
