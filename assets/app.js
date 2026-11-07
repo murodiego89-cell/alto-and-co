@@ -738,7 +738,7 @@
               <div>
                 ${[
                   ["cap-rider.jpg", "about.gallery.cap", "50% 40%", 1.12],
-                  ["tee-heritage-back.jpg", "about.gallery.tee", "50% 36%", 1.5],
+                  ["bunny-sweatshirt.jpg", "about.gallery.bunny", "50% 50%", 1.3],
                   ["tee-rancher-lifestyle.jpg", "about.gallery.rancher", "50% 76%", 1.7],
                 ].map(([f, alt, pos, z]) => `<span><img src="assets/img/${f}" alt="${t(alt)}" loading="lazy" style="object-position:${pos};--z:${z}"></span>`).join("")}
               </div>

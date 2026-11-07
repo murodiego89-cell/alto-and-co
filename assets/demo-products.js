@@ -34,6 +34,11 @@ window.DEMO_PRODUCTS = (() => {
 
   return [
     // ---- Productos con fotos reales de Alto & Co. ----
+    mk("little-bunny-sweatshirt", "Little Bunny Sweatshirt", "Unisex", 85,
+      [["Natural", "#efe6d2"]], "knit",
+      "Crewneck sweatshirt in natural, with Sofia's little bunny, red flowers and birds drawn across the back.",
+      { tags: ["featured", "new"], createdAt: "2026-11-07", sizes: ["S", "M", "L", "XL", "XXL"],
+        images: ["assets/img/bunny-sweatshirt.jpg"] }),
     mk("heritage-in-motion-tee", "Heritage in Motion Tee", "Unisex", 55,
       [["Sand", "#e3d6bf"]], "tee",
       "Heavyweight cotton tee with a relaxed, boxy fit. Small Alto & Co. wordmark on the chest and our hand-drawn rider embroidered on the back — Heritage in Motion, est. 2026.",
