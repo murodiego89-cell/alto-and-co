@@ -139,7 +139,9 @@
         </div>
         <div class="line-end">
           <div>${money(l.price * l.qty)}</div>
-          <button class="link small" data-remove="${i}">${t("cart.remove")}</button>
+          <button class="line-remove" data-remove="${i}" aria-label="${t("cart.remove")}" title="${t("cart.remove")}">
+            <svg viewBox="0 0 24 24" width="19" height="19" aria-hidden="true"><path d="M4 7h16M9.5 7V4.5h5V7M6.5 7l1 13h9l1-13M10 11v5.5M14 11v5.5" stroke="currentColor" stroke-width="1.6" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </button>
         </div>
       </li>`;
     }).join("");

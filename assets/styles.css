@@ -163,6 +163,8 @@ details p { color: var(--muted); margin: 12px 0 0; }
 .line-media > * { width: 100%; height: 100%; object-fit: cover; }
 .line-title { font-weight: 500; font-size: 14px; }
 .line-end { text-align: right; display: flex; flex-direction: column; justify-content: space-between; align-items: flex-end; font-size: 14px; }
+.line-remove { display: grid; place-items: center; width: 34px; height: 34px; margin: 0 -7px -7px 0; padding: 0; background: none; border: 0; color: var(--muted); transition: color .2s; }
+.line-remove:hover { color: var(--accent); }
 .qty { display: inline-flex; align-items: center; border: 1px solid var(--line); margin-top: 10px; }
 .qty button { background: none; border: 0; width: 30px; height: 30px; }
 .qty span { min-width: 24px; text-align: center; font-size: 13px; }
