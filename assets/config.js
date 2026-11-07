@@ -20,12 +20,15 @@ window.ALTO_CONFIG = {
   // Debe coincidir con la tarifa configurada en Shopify > Envío.
   freeShippingThreshold: 150,
 
-  // Fotos de la portada: la primera es la grande (izquierda), las otras dos van a la derecha.
-  heroImages: [
-    { src: "assets/img/tee-rancher-lifestyle.jpg", alt: "Little Rancher Tee and cap at sunset", link: "#/product/little-rancher-tee", position: "center 30%" },
-    { src: "assets/img/cap-rider.jpg", alt: "Rider Cap", link: "#/product/rider-cap" },
-    { src: "assets/img/tee-heritage-back.jpg", alt: "Heritage in Motion Tee", link: "#/product/heritage-in-motion-tee", position: "center 38%" },
-  ],
+  // Video de la portada. "wide" es para computadora (16:9) y "tall" para celular (9:16).
+  // Los poster se muestran mientras carga el video y a quien pidió reducir el movimiento.
+  // Para cambiar el video, reemplaza estos archivos. Sin sonido, de 10 a 20 segundos y menos de 6 MB.
+  heroVideo: {
+    wide: "assets/video/hero-wide.mp4",
+    tall: "assets/video/hero-tall.mp4",
+    posterWide: "assets/video/hero-wide.jpg",
+    posterTall: "assets/video/hero-tall.jpg",
+  },
 
   // Enlace del formulario de Formspree (https://formspree.io/f/xxxx).
   // Mientras esté vacío, los formularios de correo no se muestran.

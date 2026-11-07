@@ -194,12 +194,14 @@
     const compare = onSale(p) ? Math.max(...p.variants.map((v) => v.compareAt || 0)) : null;
     const badge = soldOut(p) ? t("badge.soldout") : isHandmade(p) ? t("badge.handmade") : onSale(p) ? t("badge.sale") : isNew(p) ? t("badge.new") : "";
     const ed = edition(p);
+    const dots = Object.values(p.swatches || {});
     return `<a class="card" href="#/product/${esc(p.handle)}">
-      <div class="card-media">${media(p)}${badge ? `<span class="badge ${isHandmade(p) && !soldOut(p) ? "badge-hm" : ""}">${badge}</span>` : ""}</div>
+      <div class="card-media">${media(p)}${p.images[1] ? `<div class="card-alt">${media(p, null, 1)}</div>` : ""}${badge ? `<span class="badge ${isHandmade(p) && !soldOut(p) ? "badge-hm" : ""}">${badge}</span>` : ""}</div>
       <div class="card-info">
         <h3>${esc(p.title)}</h3>
         ${ed ? `<p class="muted small">${t("hm.edition", { n: ed })}</p>` : ""}
         <p>${compare ? `<s class="muted">${money(compare)}</s> ` : ""}${money(p.price)}</p>
+        ${dots.length > 1 ? `<div class="card-dots" aria-hidden="true">${dots.map((c) => `<span style="--sw:${esc(c)}"></span>`).join("")}</div>` : ""}
       </div>
     </a>`;
   }
@@ -217,34 +219,64 @@
     demo.textContent = t("demo.banner");
     $("#langBtn").textContent = state.lang === "fr" ? "EN" : "FR";
     $("#cartBtn").setAttribute("aria-label", t("cart"));
-    $("#nav").innerHTML = `
-      <a href="#/shop?sort=new">${t("nav.new")}</a>
-      <a href="#/shop/Women">${t("nav.women")}</a>
-      <a href="#/shop/Men">${t("nav.men")}</a>
-      <a href="#/handmade?type=boots">${t("nav.boots")}</a>
-      <a href="#/shop/Accessories">${t("nav.accessories")}</a>
-      <a href="#/about">${t("nav.story")}</a>`;
+    $("#searchBtn").setAttribute("aria-label", t("search.label"));
+    $("#searchLabel").textContent = t("search.label");
+    $("#searchInput").placeholder = t("search.placeholder");
+    $("#searchClose").setAttribute("aria-label", t("search.close"));
+    const mega = (links, img, label, href) => `<div class="mega"><div class="mega-inner">
+      <div class="mega-links">${links.map(([h, l]) => `<a href="${h}">${l}</a>`).join("")}</div>
+      <a class="mega-photo" href="${href}"><img src="${img}" alt="" loading="lazy"><span>${label}</span></a>
+    </div></div>`;
+    const item = (href, label, panel = "") => `<div class="nav-item"><a href="${href}">${label}</a>${panel}</div>`;
+    $("#nav").innerHTML =
+      item("#/shop?sort=new", t("nav.new")) +
+      item("#/shop/Women", t("nav.women"), mega([
+        ["#/shop/Women", t("home.viewAll")], ["#/shop/Unisex", t("nav.tees")], ["#/shop/Accessories", t("nav.caps")],
+        ["#/handmade?type=hats", t("nav.hats")],
+      ], "assets/img/cap-rider.jpg", t("nav.caps"), "#/shop/Accessories")) +
+      item("#/shop/Men", t("nav.men"), mega([
+        ["#/shop/Men", t("home.viewAll")], ["#/shop/Unisex", t("nav.tees")], ["#/shop/Accessories", t("nav.caps")],
+        ["#/handmade?type=belts", t("nav.belts")],
+      ], "assets/img/tee-rancher-lifestyle.jpg", t("nav.tees"), "#/shop/Unisex")) +
+      item("#/shop/Accessories", t("nav.accessories")) +
+      item("#/handmade", t("nav.handmade"), mega([
+        ["#/handmade", t("home.viewAll")], ["#/handmade?type=boots", t("nav.boots")], ["#/handmade?type=hats", t("nav.hats")],
+        ["#/handmade?type=belts", t("nav.belts")],
+      ], "assets/img/handmade-boot-artisan.jpg", t("nav.boots"), "#/handmade?type=boots")) +
+      item("#/about", t("nav.story"));
     $("#footer").innerHTML = `
       <div class="footer-inner">
         <div class="footer-brand">
-          <div class="logo"><img src="assets/logo.png" alt="Alto & Co." width="1400" height="277"></div>
-          ${cfg.signupEndpoint ? `<p class="muted small">${t("footer.news")}</p>
+          <a class="logo" href="#/" aria-label="Alto & Co."><img src="assets/logo-light.png" alt="Alto & Co." width="800" height="158"></a>
+          ${cfg.signupEndpoint ? `<p class="small">${t("footer.news")}</p>
           <form class="news" id="newsForm">
             <label class="sr-only" for="newsEmail">${t("footer.email")}</label>
             <input id="newsEmail" name="email" type="email" required placeholder="${t("footer.email")}">
-            <button class="btn">${t("footer.join")}</button>
+            <button class="btn btn-light">${t("footer.join")}</button>
           </form>` : ""}
         </div>
-        <div class="footer-links">
-          <a href="#/shop">${t("nav.shop")}</a>
+        <div class="footer-col">
+          <h2>${t("nav.shop")}</h2>
+          <a href="#/shop?sort=new">${t("nav.new")}</a>
+          <a href="#/shop/Women">${t("nav.women")}</a>
+          <a href="#/shop/Men">${t("nav.men")}</a>
+          <a href="#/shop/Accessories">${t("nav.accessories")}</a>
           <a href="#/handmade">${t("nav.handmade")}</a>
-          <a href="#/about">${t("nav.story")}</a>
+        </div>
+        <div class="footer-col">
+          <h2>${t("footer.help")}</h2>
           <a href="#/help">${t("nav.help")}</a>
           <a href="mailto:${esc(cfg.contactEmail)}">${esc(cfg.contactEmail)}</a>
         </div>
-        <div>${payIcons()}</div>
+        <div class="footer-col">
+          <h2>${t("nav.about")}</h2>
+          <a href="#/about">${t("nav.story")}</a>
+        </div>
       </div>
-      <div class="footer-bottom muted small">© ${new Date().getFullYear()} Alto & Co. ${t("footer.rights")} · 🇨🇦 Canada · CAD</div>`;
+      <div class="footer-bottom small">
+        <span>© ${new Date().getFullYear()} Alto & Co. ${t("footer.rights")} · 🇨🇦 Canada · CAD</span>
+        ${payIcons()}
+      </div>`;
     renderCartCount();
     renderDrawer();
     if (!$("#promo").hidden) renderPromo();
@@ -298,37 +330,128 @@
   }
 
   /* ---------- vistas ---------- */
+  function heroMedia() {
+    const hv = cfg.heroVideo;
+    const tall = matchMedia("(max-width: 760px)").matches;
+    const poster = tall ? hv.posterTall : hv.posterWide;
+    if (matchMedia("(prefers-reduced-motion: reduce)").matches) return `<img class="hero-media" src="${esc(poster)}" alt="">`;
+    return `<video class="hero-media" id="heroVideo" src="${esc(tall ? hv.tall : hv.wide)}" poster="${esc(poster)}"
+        autoplay muted loop playsinline preload="auto" aria-hidden="true"></video>
+      <button class="hero-toggle" id="heroToggle" aria-label="${t("hero.pause")}">
+        <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><path class="i-pause" d="M7 5h3.5v14H7zM13.5 5H17v14h-3.5z"/><path class="i-play" d="M8 5l11 7-11 7z"/></svg>
+      </button>`;
+  }
+
+  function mountHero() {
+    const v = $("#heroVideo");
+    if (!v) return;
+    const btn = $("#heroToggle");
+    const sync = () => {
+      btn.classList.toggle("paused", v.paused);
+      btn.setAttribute("aria-label", t(v.paused ? "hero.play" : "hero.pause"));
+    };
+    v.addEventListener("play", sync);
+    v.addEventListener("pause", sync);
+    btn.addEventListener("click", () => (v.paused ? v.play() : v.pause()));
+    v.muted = true;
+    v.play().catch(sync); // modo ahorro de batería: se queda el poster y el botón ofrece reproducir
+  }
+
+  function mountStory() {
+    document.querySelectorAll(".chapter").forEach((ch) => {
+      ch.classList.add("reveal");
+      const io = new IntersectionObserver(([e]) => {
+        if (!e.isIntersecting) return;
+        ch.classList.add("is-in");
+        io.disconnect();
+      }, { rootMargin: "0px 0px -20% 0px" });
+      io.observe($(".chapter-spacer", ch));
+    });
+  }
+
+  function mountRails() {
+    document.querySelectorAll("[data-rail]").forEach((wrap) => {
+      const rail = $(".rail", wrap);
+      const nav = $(".rail-nav", wrap);
+      nav.hidden = rail.scrollWidth <= rail.clientWidth + 4;
+      nav.addEventListener("click", (e) => {
+        const b = e.target.closest("[data-dir]");
+        if (b) rail.scrollBy({ left: +b.dataset.dir * rail.clientWidth * 0.8, behavior: "smooth" });
+      });
+    });
+  }
+
   function viewHome() {
-    const featured = state.products.filter((p) => p.tags.map((x) => x.toLowerCase()).includes("featured"));
-    const list = [...featured, ...state.products.filter((p) => !featured.includes(p))].slice(0, 8);
-    const heroImgs = cfg.heroImages || [];
-    const cats = categories().slice(0, 3);
+    // La portada solo muestra productos con foto real; los dibujos de ejemplo se quedan en la tienda
+    const photos = state.products.filter((p) => p.images.length);
+    const pool = photos.length ? photos : state.products;
+    const featured = pool.filter((p) => hasTag(p, "featured"));
+    const list = [...featured, ...pool.filter((p) => !featured.includes(p))].slice(0, 12);
+    const split = [
+      { href: "#/shop/Unisex", img: "assets/img/tee-heritage-back.jpg", label: t("nav.tees"), pos: "center 40%" },
+      { href: "#/shop/Accessories", img: "assets/img/cap-rider.jpg", label: t("nav.caps"), pos: "center 45%" },
+    ];
     return `
       <section class="hero">
-        <div class="hero-text">
+        ${heroMedia()}
+        <div class="hero-copy">
           <span class="soon-pill"><span class="soon-dot" aria-hidden="true"></span>${t("hero.soon")}</span>
           <h1 class="hero-title">${(() => {
-            // "A little wild. A little western." → segunda frase en cursiva, en su propia línea
+            // "A little wild. A little western." → cada frase en su propia línea
             const [first, ...rest] = t("hero.title").split(/(?<=\.)\s+/);
             return rest.length ? `${first} <em>${rest.join(" ")}</em>` : first;
           })()}</h1>
           <p class="hero-statement">${t("hero.statement")}</p>
-          <p class="hero-lede">${t("hero.text")}</p>
           ${cfg.signupEndpoint ? `<form class="news hero-news">
             <label class="sr-only" for="heroEmail">${t("footer.email")}</label>
             <input id="heroEmail" name="email" type="email" required placeholder="${t("footer.email")}">
-            <button class="btn">${t("hero.notify")}</button>
-          </form>
-          <p class="muted small hero-note">${t("hero.notifyNote")}</p>` : ""}
-          <div class="hero-links">
-            <a class="link" href="#/shop">${t("hero.cta")} →</a>
-            <a class="link" href="#/handmade">${t("hero.cta2")} →</a>
+            <button class="btn btn-light">${t("hero.notify")}</button>
+          </form>` : ""}
+          <div class="hero-cta">
+            <a class="btn btn-light" href="#/shop">${t("hero.cta")}</a>
+            <a class="btn btn-line" href="#/handmade">${t("hero.cta2")}</a>
           </div>
         </div>
-        <div class="hero-art">
-          ${heroImgs.length
-            ? heroImgs.slice(0, 3).map((h) => `<a class="hero-tile" href="${esc(h.link || "#/shop")}"><img src="${esc(h.src)}" alt="${esc(h.alt || "Alto & Co.")}" style="object-position:${esc(h.position || "center")}"></a>`).join("")
-            : state.products.slice(0, 3).map((p) => `<div class="hero-tile" aria-hidden="true">${media(p)}</div>`).join("")}
+      </section>
+
+      <section class="split">
+        ${split.map((c) => `<a class="split-tile" href="${c.href}">
+          <img src="${c.img}" alt="" loading="lazy" style="object-position:${c.pos}">
+          <div><h2>${c.label}</h2><span>${t("home.shop")}</span></div>
+        </a>`).join("")}
+      </section>
+
+      <section class="rail-wrap" data-rail>
+        <div class="section-head">
+          <h2 class="section-title">${t("nav.new")}</h2>
+          <div class="rail-head-end">
+            <div class="rail-nav" hidden>
+              <button data-dir="-1" aria-label="${t("home.prev")}">←</button>
+              <button data-dir="1" aria-label="${t("home.next")}">→</button>
+            </div>
+            <a href="#/shop" class="link">${t("home.viewAll")}</a>
+          </div>
+        </div>
+        <div class="rail">${list.map(card).join("")}</div>
+      </section>
+
+      <a class="banner" href="#/handmade">
+        <img src="assets/img/handmade-boot-artisan.jpg" alt="" loading="lazy">
+        <div class="banner-copy">
+          <p class="eyebrow">${t("hm.eyebrow")}</p>
+          <h2>${t("hm.title")}</h2>
+          <p>${t("hm.teaser")}</p>
+          <span class="btn btn-light">${t("hm.cta")}</span>
+        </div>
+      </a>
+
+      <section class="home-story">
+        <div class="home-story-photo"><img src="assets/img/founders.jpg" alt="${t("about.foundersAlt")}" loading="lazy"></div>
+        <div class="home-story-copy">
+          <p class="eyebrow">${t("about.eyebrow")}</p>
+          <h2>${t("home.story.title")}</h2>
+          <p>${t("home.story.text")}</p>
+          <a class="btn btn-line" href="#/about">${t("home.story.cta")}</a>
         </div>
       </section>
 
@@ -336,53 +459,26 @@
         <div><h3>${t("vp.ship.t")}</h3><p>${t("vp.ship.d")}</p></div>
         <div><h3>${t("vp.pay.t")}</h3><p>${t("vp.pay.d")}</p></div>
         <div><h3>${t("vp.ret.t")}</h3><p>${t("vp.ret.d")}</p></div>
-      </section>
-
-      ${state.products.some(isHandmade) ? `
-      <section class="section">
-        <a class="hm-teaser" href="#/handmade">
-          <div>
-            <p class="eyebrow">${t("hm.eyebrow")}</p>
-            <h2>${t("hm.title")}</h2>
-            <p>${t("hm.teaser")}</p>
-            <span class="btn btn-light">${t("hm.cta")}</span>
-          </div>
-          <div class="hm-teaser-art" aria-hidden="true">
-            ${state.products.filter(isHandmade).slice(0, 3).map((p) => `<div>${media(p)}</div>`).join("")}
-          </div>
-        </a>
-      </section>` : ""}
-
-      <section class="section">
-        <h2 class="section-title">${t("home.categories")}</h2>
-        <div class="cats">
-          ${cats.map((c) => {
-            const p = state.products.find((x) => x.category === c);
-            return `<a class="cat" href="#/shop/${encodeURIComponent(c)}">${media(p)}<span>${esc(catLabel(c))}</span></a>`;
-          }).join("")}
-        </div>
-      </section>
-
-      <section class="section">
-        <div class="section-head">
-          <h2 class="section-title">${t("home.featured")}</h2>
-          <a href="#/shop" class="link">${t("home.viewAll")} →</a>
-        </div>
-        <div class="grid">${list.map(card).join("")}</div>
       </section>`;
   }
 
   function viewShop(category, params) {
     const sort = params.get("sort") || "new";
-    let list = state.products.filter((p) => !category || p.category === category);
+    const q = (params.get("q") || "").trim();
+    const needle = q.toLowerCase();
+    // Las prendas unisex también aparecen en Women y Men
+    let list = state.products.filter((p) => !category || p.category === category ||
+      (p.category === "Unisex" && (category === "Women" || category === "Men")));
+    if (q) list = list.filter((p) => `${p.title} ${p.description} ${p.category}`.toLowerCase().includes(needle));
     list = [...list].sort((a, b) =>
-      sort === "low" ? a.price - b.price : sort === "high" ? b.price - a.price : String(b.createdAt).localeCompare(String(a.createdAt))
+      sort === "low" ? a.price - b.price : sort === "high" ? b.price - a.price
+        : (b.images.length > 0) - (a.images.length > 0) || String(b.createdAt).localeCompare(String(a.createdAt))
     );
     const chip = (c, label) =>
       `<a class="chip ${c === category || (!c && !category) ? "active" : ""}" href="#/shop${c ? "/" + encodeURIComponent(c) : ""}${sort !== "new" ? "?sort=" + sort : ""}">${esc(label)}</a>`;
     return `
       <section class="section">
-        <h1 class="page-title">${category ? esc(catLabel(category)) : t("shop.title")}</h1>
+        <h1 class="page-title">${q ? t("shop.results", { q: esc(q) }) : category ? esc(catLabel(category)) : t("shop.title")}</h1>
         <div class="toolbar">
           <div class="chips">${chip("", t("shop.all"))}${categories().map((c) => chip(c, catLabel(c))).join("")}</div>
           <label class="sort"><span class="muted small">${t("shop.sort")}</span>
@@ -547,25 +643,50 @@
     const parts = s.split(/(?<=\.)\s+/);
     return parts.length > 1 ? `${parts.slice(0, -1).join(" ")} <em>${parts[parts.length - 1]}</em>` : s;
   };
-  const viewAbout = () => `
-    <section class="section story">
-      <figure class="story-media">
-        <div class="story-photo"><img src="assets/img/founders.jpg" alt="${t("about.foundersAlt")}"></div>
+  // Cada capítulo: la foto queda fija detrás y el texto sube como un telón para revelarla
+  const chapter = (name, photo, text) => `
+    <section class="chapter chapter-${name}">
+      <div class="chapter-stage">${photo}</div>
+      <div class="chapter-text"><div class="chapter-col">${text}
+        <span class="chapter-cue" aria-hidden="true">↓</span>
+      </div></div>
+      <div class="chapter-spacer"></div>
+    </section>`;
+
+  const viewAbout = () => chapter("family", `
+      <figure>
+        <img src="assets/img/founders.jpg" alt="${t("about.foundersAlt")}" width="1536" height="1024">
         <figcaption>
           <span class="story-names">Diego A. Muro de la Torre <span class="amp">&amp;</span> Aldo E. Muro de la Torre</span>
           <span class="story-role">${t("about.foundersRole")}</span>
         </figcaption>
-      </figure>
-      <div class="story-text">
+      </figure>`, `
+      <div class="story-head">
         <p class="eyebrow">${t("about.eyebrow")}</p>
         <h1 class="story-title">${italicLast(t("about.title"))}</h1>
-        <p class="story-lead">${t("about.p1")}</p>
-        <p>${t("about.p2")}</p>
-        <p>${t("about.p3")}</p>
-        <blockquote class="story-quote">${t("about.p4")}</blockquote>
-        <p class="story-sign">${t("about.sign")}</p>
-        <a class="btn" href="#/shop">${t("about.cta")}</a>
+        <p class="story-intro">${t("about.intro")}</p>
       </div>
+      <p class="story-lead">${t("about.p1")}</p>
+      <p>${t("about.p2")}</p>
+      <p>${t("about.p3")}</p>
+      <blockquote class="story-quote">${t("about.p4")}</blockquote>
+      <p class="story-sign">${t("about.sign")}</p>`) + chapter("sister", `
+      <figure>
+        <img src="assets/img/hermana-alto-co.jpg" alt="${t("about.sister.alt")}" width="1086" height="1448" loading="lazy">
+        <figcaption>
+          <span class="story-names">${t("about.sister.name")}</span>
+          <span class="story-role">${t("about.sister.role")}</span>
+        </figcaption>
+      </figure>`, `
+      <p class="sister-bridge">${t("about.bridge")}</p>
+      <h2>${t("about.sister.title")}</h2>
+      <p>${t("about.sister.p1")}</p>
+      <p>${t("about.sister.p2")}</p>
+      <p>${t("about.sister.p3")}</p>`) + `
+    <section class="story-close">
+      <p>${t("about.sister.sign")}</p>
+      <img src="assets/logo.png" alt="Alto & Co." width="1400" height="277" loading="lazy">
+      <a class="btn" href="#/shop">${t("about.cta")}</a>
     </section>`;
 
   const viewHelp = () => `
@@ -583,6 +704,10 @@
   /* ---------- router ---------- */
   function route() {
     closeDrawer();
+    closeSearch();
+    // Al navegar se cierra el menú grande, aunque el cursor siga encima
+    $("#nav").classList.toggle("no-mega", $("#nav").matches(":hover"));
+    if ($("#nav").contains(document.activeElement)) document.activeElement.blur();
     $("#nav").classList.remove("open");
     $("#menuBtn").setAttribute("aria-expanded", "false");
 
@@ -607,8 +732,12 @@
     else html = viewNotFound();
 
     app.innerHTML = html;
+    document.body.classList.toggle("hero-page", !parts.length);
+    mountHero();
+    mountRails();
+    mountStory();
     // Marca el enlace activo: misma ruta y, si el enlace lleva filtros (?type=boots), los mismos filtros
-    document.querySelectorAll("#nav a").forEach((a) => {
+    document.querySelectorAll("#nav .nav-item > a").forEach((a) => {
       const [aPath, aQuery = ""] = a.getAttribute("href").replace(/^#/, "").split("?");
       const aParams = new URLSearchParams(aQuery);
       const match = aPath === path && [...aParams.keys()].every((k) => params.get(k) === aParams.get(k));
@@ -620,12 +749,38 @@
     else window.scrollTo({ top: 0 });
   }
 
+  /* ---------- búsqueda ---------- */
+  function closeSearch() {
+    $("#searchForm").hidden = true;
+    $("#searchBtn").setAttribute("aria-expanded", "false");
+  }
+
   /* ---------- eventos globales ---------- */
+  const onScroll = () => document.body.classList.toggle("scrolled", window.scrollY > 24);
+  window.addEventListener("scroll", onScroll, { passive: true });
+  onScroll();
+  $("#nav").addEventListener("mouseleave", () => $("#nav").classList.remove("no-mega"));
+  $("#nav").addEventListener("focusin", () => $("#nav").classList.remove("no-mega"));
+  $("#searchBtn").addEventListener("click", () => {
+    const form = $("#searchForm");
+    form.hidden = !form.hidden;
+    $("#searchBtn").setAttribute("aria-expanded", String(!form.hidden));
+    if (!form.hidden) $("#searchInput").focus();
+  });
+  $("#searchClose").addEventListener("click", closeSearch);
+  $("#searchForm").addEventListener("submit", (e) => {
+    e.preventDefault();
+    const q = $("#searchInput").value.trim();
+    if (!q) return;
+    closeSearch();
+    location.hash = `#/shop?q=${encodeURIComponent(q)}`;
+  });
   $("#cartBtn").addEventListener("click", () => { renderDrawer(); openDrawer(); });
   $("#overlay").addEventListener("click", closeDrawer);
   document.addEventListener("keydown", (e) => {
     if (e.key !== "Escape") return;
     closeDrawer();
+    closeSearch();
     if (!$("#promo").hidden) closePromo();
   });
   $("#promo").addEventListener("click", async (e) => {

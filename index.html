@@ -18,8 +18,8 @@
   <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='18' fill='%237a3b1c'/><text x='50' y='70' font-size='60' text-anchor='middle' fill='%23f6f3ee' font-family='Arial Rounded MT Bold,Arial,sans-serif'>A</text></svg>">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="assets/styles.css?v=4">
+  <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;600;700&family=Cormorant+Garamond:wght@400;500;600&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="assets/styles.css?v=8">
 </head>
 <body>
   <div class="demo-banner" id="demoBanner" hidden></div>
@@ -33,16 +33,27 @@
       <button class="icon-btn menu-btn" id="menuBtn" aria-label="Menu" aria-expanded="false">
         <svg viewBox="0 0 24 24" width="22" height="22"><path d="M3 7h18M3 12h18M3 17h18" stroke="currentColor" stroke-width="1.6" fill="none"/></svg>
       </button>
+      <a href="#/" class="logo" aria-label="Alto & Co. home">
+        <img class="logo-dark" src="assets/logo.png" alt="Alto & Co." width="1400" height="277">
+        <img class="logo-light" src="assets/logo-light.png" alt="" width="800" height="158">
+      </a>
       <nav class="nav" id="nav" aria-label="Main"></nav>
-      <a href="#/" class="logo" aria-label="Alto & Co. home"><img src="assets/logo.png" alt="Alto & Co." width="1400" height="277"></a>
       <div class="header-actions">
         <button class="lang-btn" id="langBtn" aria-label="Change language"></button>
+        <button class="icon-btn" id="searchBtn" aria-label="Search" aria-expanded="false">
+          <svg viewBox="0 0 24 24" width="22" height="22"><circle cx="11" cy="11" r="6.5" stroke="currentColor" stroke-width="1.6" fill="none"/><path d="M16 16l5 5" stroke="currentColor" stroke-width="1.6" fill="none"/></svg>
+        </button>
         <button class="icon-btn cart-btn" id="cartBtn" aria-label="Bag">
           <svg viewBox="0 0 24 24" width="22" height="22"><path d="M6 8h12l-1 12H7L6 8zM9 8V6a3 3 0 0 1 6 0v2" stroke="currentColor" stroke-width="1.6" fill="none"/></svg>
           <span class="cart-count" id="cartCount" hidden>0</span>
         </button>
       </div>
     </div>
+    <form class="search" id="searchForm" role="search" hidden>
+      <label class="sr-only" for="searchInput" id="searchLabel"></label>
+      <input id="searchInput" type="search" autocomplete="off">
+      <button type="button" class="icon-btn" id="searchClose">✕</button>
+    </form>
   </header>
 
   <main id="app" tabindex="-1"></main>
@@ -54,10 +65,10 @@
   <div class="toast" id="toast" role="status" aria-live="polite"></div>
   <div class="promo" id="promo" hidden></div>
 
-  <script src="assets/config.js?v=4"></script>
-  <script src="assets/i18n.js?v=4"></script>
-  <script src="assets/demo-products.js?v=4"></script>
-  <script src="assets/shopify.js?v=4"></script>
-  <script src="assets/app.js?v=4"></script>
+  <script src="assets/config.js?v=8"></script>
+  <script src="assets/i18n.js?v=8"></script>
+  <script src="assets/demo-products.js?v=8"></script>
+  <script src="assets/shopify.js?v=8"></script>
+  <script src="assets/app.js?v=8"></script>
 </body>
 </html>
