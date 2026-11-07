@@ -185,6 +185,9 @@
   const soldOut = (p) => !p.variants.some((v) => v.available);
   const hasTag = (p, tag) => p.tags.some((x) => x.toLowerCase() === tag);
   const isHandmade = (p) => hasTag(p, "handmade");
+  // Secciones de Accesorios: cada una se llena con la etiqueta del mismo nombre
+  const ACCESSORY_TYPES = ["caps", "hats", "bags", "belts"];
+  const isAccessory = (p) => p.category === "Accessories" || ACCESSORY_TYPES.some((k) => hasTag(p, k));
   const edition = (p) => {
     const tag = p.tags.find((x) => /^edition-\d+$/i.test(x));
     return tag ? tag.split("-")[1] : null;
@@ -206,7 +209,7 @@
     </a>`;
   }
 
-  const categories = () => [...new Set(state.products.map((p) => p.category))];
+  const categories = () => [...new Set(["Women", "Men", "Accessories", "Handmade", ...state.products.map((p) => p.category)])];
 
   function renderChrome() {
     document.documentElement.lang = state.lang === "fr" ? "fr-CA" : "en-CA";
@@ -231,16 +234,20 @@
     $("#nav").innerHTML =
       item("#/shop?sort=new", t("nav.new")) +
       item("#/shop/Women", t("nav.women"), mega([
-        ["#/shop/Women", t("home.viewAll")], ["#/shop/Unisex", t("nav.tees")], ["#/shop/Accessories", t("nav.caps")],
-        ["#/handmade?type=hats", t("nav.hats")],
-      ], "assets/img/cap-rider.jpg", t("nav.caps"), "#/shop/Accessories")) +
+        ["#/shop/Women", t("home.viewAll")], ["#/shop/Unisex", t("nav.tees")], ["#/shop/Accessories?type=caps", t("nav.caps")],
+        ["#/shop/Accessories?type=hats", t("nav.hats")],
+      ], "assets/img/cap-rider.jpg", t("nav.caps"), "#/shop/Accessories?type=caps")) +
       item("#/shop/Men", t("nav.men"), mega([
-        ["#/shop/Men", t("home.viewAll")], ["#/shop/Unisex", t("nav.tees")], ["#/shop/Accessories", t("nav.caps")],
+        ["#/shop/Men", t("home.viewAll")], ["#/shop/Unisex", t("nav.tees")], ["#/shop/Accessories?type=caps", t("nav.caps")],
         ["#/handmade?type=belts", t("nav.belts")],
       ], "assets/img/tee-rancher-lifestyle.jpg", t("nav.tees"), "#/shop/Unisex")) +
-      item("#/shop/Accessories", t("nav.accessories")) +
+      item("#/shop/Accessories", t("nav.accessories"), mega([
+        ["#/shop/Accessories", t("home.viewAll")], ["#/shop/Accessories?type=caps", t("nav.caps")],
+        ["#/shop/Accessories?type=hats", t("nav.hats")], ["#/shop/Accessories?type=bags", t("nav.bags")],
+        ["#/shop/Accessories?type=belts", t("nav.belts")],
+      ], "assets/img/cap-rider.jpg", t("nav.caps"), "#/shop/Accessories?type=caps")) +
       item("#/handmade", t("nav.handmade"), mega([
-        ["#/handmade", t("home.viewAll")], ["#/handmade?type=boots", t("nav.boots")], ["#/handmade?type=hats", t("nav.hats")],
+        ["#/handmade", t("home.viewAll")], ["#/handmade?type=boots", t("nav.boots")],
         ["#/handmade?type=belts", t("nav.belts")],
       ], "assets/img/handmade-boot-artisan.jpg", t("nav.boots"), "#/handmade?type=boots")) +
       item("#/about", t("nav.story"));
@@ -416,7 +423,7 @@
     const list = [...featured, ...pool.filter((p) => !featured.includes(p))].slice(0, 12);
     const split = [
       { href: "#/shop/Unisex", img: "assets/img/tee-heritage-back.jpg", label: t("nav.tees"), pos: "center 40%" },
-      { href: "#/shop/Accessories", img: "assets/img/cap-rider.jpg", label: t("nav.caps"), pos: "center 45%" },
+      { href: "#/shop/Accessories?type=caps", img: "assets/img/cap-rider.jpg", label: t("nav.caps"), pos: "center 45%" },
     ];
     return `
       <section class="hero">
@@ -495,7 +502,10 @@
     const needle = q.toLowerCase();
     // Las prendas unisex también aparecen en Women y Men
     let list = state.products.filter((p) => !category || p.category === category ||
-      (p.category === "Unisex" && (category === "Women" || category === "Men")));
+      (p.category === "Unisex" && (category === "Women" || category === "Men")) ||
+      (category === "Accessories" && isAccessory(p)));
+    const type = category === "Accessories" && ACCESSORY_TYPES.includes(params.get("type")) ? params.get("type") : null;
+    if (type) list = list.filter((p) => hasTag(p, type));
     if (q) list = list.filter((p) => `${p.title} ${p.description} ${p.category}`.toLowerCase().includes(needle));
     list = [...list].sort((a, b) =>
       sort === "low" ? a.price - b.price : sort === "high" ? b.price - a.price
@@ -505,7 +515,7 @@
       `<a class="chip ${c === category || (!c && !category) ? "active" : ""}" href="#/shop${c ? "/" + encodeURIComponent(c) : ""}${sort !== "new" ? "?sort=" + sort : ""}">${esc(label)}</a>`;
     return `
       <section class="section">
-        <h1 class="page-title">${q ? t("shop.results", { q: esc(q) }) : category ? esc(catLabel(category)) : t("shop.title")}</h1>
+        <h1 class="page-title">${q ? t("shop.results", { q: esc(q) }) : type ? t(`nav.${type}`) : category ? esc(catLabel(category)) : t("shop.title")}</h1>
         <div class="toolbar">
           <div class="chips">${chip("", t("shop.all"))}${categories().map((c) => chip(c, catLabel(c))).join("")}</div>
           <label class="sort"><span class="muted small">${t("shop.sort")}</span>
@@ -514,8 +524,14 @@
             </select>
           </label>
         </div>
-        <p class="muted small">${t("shop.count", { n: list.length })}</p>
-        ${list.length ? `<div class="grid">${list.map(card).join("")}</div>` : `<p>${t("shop.none")}</p>`}
+        ${category === "Accessories" ? `<div class="chips chips-sub">
+          ${["", ...ACCESSORY_TYPES].map((k) => {
+            const query = [k && `type=${k}`, sort !== "new" && `sort=${sort}`].filter(Boolean).join("&");
+            return `<a class="chip ${(k || null) === type ? "active" : ""}" href="#/shop/Accessories${query ? "?" + query : ""}">${k ? t(`nav.${k}`) : t("shop.all")}</a>`;
+          }).join("")}
+        </div>` : ""}
+        ${list.length ? `<p class="muted small">${t("shop.count", { n: list.length })}</p>
+        <div class="grid">${list.map(card).join("")}</div>` : `<p class="shop-empty">${t(type ? "shop.soon" : "shop.none")}</p>`}
       </section>`;
   }
 
@@ -709,7 +725,10 @@
               <figcaption>${t("about.gallery.caption")}</figcaption>
             </figure>
           </div>
-          <div class="ab-print"><div class="rv-clip"><img src="assets/img/hermana-alto-co.jpg" alt="${t("about.sister.alt")}" width="900" height="1200" loading="lazy"></div></div>
+          <figure class="ab-portrait">
+            <div class="ab-print"><div class="rv-clip"><img src="assets/img/hermana-alto-co.jpg" alt="${t("about.sister.alt")}" width="900" height="1200" loading="lazy"></div></div>
+            <figcaption>${t("about.sister.caption")}</figcaption>
+          </figure>
         </div>
       </section>
 
