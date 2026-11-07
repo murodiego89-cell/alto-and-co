@@ -653,6 +653,8 @@
       sort === "low" ? a.price - b.price : sort === "high" ? b.price - a.price : String(b.createdAt).localeCompare(String(a.createdAt)));
     return `
       <section class="hm-hero">
+        ${matchMedia("(prefers-reduced-motion: reduce)").matches ? "" : `<video class="hm-video" id="hmVideo" src="${esc(cfg.handmadeVideo.src)}" poster="${esc(cfg.handmadeVideo.poster)}"
+          autoplay muted loop playsinline preload="auto" disablepictureinpicture disableremoteplayback tabindex="-1" aria-hidden="true"></video>`}
         <div class="hm-hero-inner">
           <p class="eyebrow">${t("hm.eyebrow")}</p>
           <h1>${t("hm.title")}</h1>
@@ -802,6 +804,11 @@
     document.body.classList.toggle("hero-page", !parts.length);
     mountHero();
     mountRails();
+    const hmVideo = $("#hmVideo");
+    if (hmVideo) {
+      hmVideo.muted = true;
+      hmVideo.play().catch(() => hmVideo.remove()); // si el navegador no lo reproduce, queda la foto de fondo
+    }
     mountStory();
     // Marca el enlace activo: misma ruta y, si el enlace lleva filtros (?type=boots), los mismos filtros
     document.querySelectorAll("#nav .nav-item > a").forEach((a) => {

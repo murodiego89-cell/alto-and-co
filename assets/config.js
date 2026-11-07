@@ -30,6 +30,9 @@ window.ALTO_CONFIG = {
     posterTall: "assets/video/hero-tall.jpg",
   },
 
+  // Video del banner de Handmade: sin sonido, sin controles y en loop continuo.
+  handmadeVideo: { src: "assets/video/handmade-banner.mp4", poster: "assets/video/handmade-banner.jpg" },
+
   // Enlace del formulario de Formspree (https://formspree.io/f/xxxx).
   // Mientras esté vacío, los formularios de correo no se muestran.
   signupEndpoint: "",
