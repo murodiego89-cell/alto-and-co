@@ -25,6 +25,7 @@
     loaded: false,
     error: false,
     cart: store.get("alto-cart", []),
+    wish: store.get("alto-wish", []),
   };
 
   function t(key, vars = {}) {
@@ -80,6 +81,35 @@
     saveCart();
     renderDrawer();
     openDrawer();
+  }
+
+  /* ---------- wishlist (se guarda en el navegador) ---------- */
+  const HEART = `<svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"><path d="M12 20.5s-7.5-4.6-9.6-9.2C1 8 2.8 4.8 6.2 4.6c2.2-.1 4.4 1 5.8 3 1.4-2 3.6-3.1 5.8-3 3.4.2 5.2 3.4 3.8 6.7-2.1 4.6-9.6 9.2-9.6 9.2z" stroke="currentColor" stroke-width="1.6"/></svg>`;
+  const inWish = (handle) => state.wish.includes(handle);
+  const wishLabel = (handle) => t(inWish(handle) ? "wish.remove" : "wish.add");
+  const wishButton = (p) => `<button type="button" class="wish-toggle ${inWish(p.handle) ? "on" : ""}" data-wish="${esc(p.handle)}"
+    aria-pressed="${inWish(p.handle)}" aria-label="${wishLabel(p.handle)}">${HEART}</button>`;
+
+  function renderWishCount() {
+    const el = $("#wishCount");
+    el.textContent = state.wish.length;
+    el.hidden = !state.wish.length;
+  }
+
+  function toggleWish(handle) {
+    const adding = !inWish(handle);
+    state.wish = adding ? [...state.wish, handle] : state.wish.filter((h) => h !== handle);
+    store.set("alto-wish", state.wish);
+    renderWishCount();
+    toast(t(adding ? "wish.added" : "wish.removed"));
+    if (location.hash.startsWith("#/wishlist")) return route();
+    document.querySelectorAll(`[data-wish="${CSS.escape(handle)}"]`).forEach((b) => {
+      b.classList.toggle("on", adding);
+      b.setAttribute("aria-pressed", String(adding));
+      b.setAttribute("aria-label", wishLabel(handle));
+      const text = $("span", b);
+      if (text) text.textContent = wishLabel(handle);
+    });
   }
 
   function renderCartCount() {
@@ -200,7 +230,7 @@
     const badge = soldOut(p) ? t("badge.soldout") : isHandmade(p) ? t("badge.handmade") : onSale(p) ? t("badge.sale") : isNew(p) ? t("badge.new") : "";
     const ed = edition(p);
     const dots = Object.values(p.swatches || {});
-    return `<a class="card" href="#/product/${esc(p.handle)}">
+    return `<div class="card-wrap">${wishButton(p)}<a class="card" href="#/product/${esc(p.handle)}">
       <div class="card-media">${media(p)}${p.images[1] ? `<div class="card-alt">${media(p, null, 1)}</div>` : ""}${badge ? `<span class="badge ${isHandmade(p) && !soldOut(p) ? "badge-hm" : ""}">${badge}</span>` : ""}</div>
       <div class="card-info">
         <h3>${esc(p.title)}</h3>
@@ -208,7 +238,7 @@
         <p>${compare ? `<s class="muted">${money(compare)}</s> ` : ""}${money(p.price)}</p>
         ${dots.length > 1 ? `<div class="card-dots" aria-hidden="true">${dots.map((c) => `<span style="--sw:${esc(c)}"></span>`).join("")}</div>` : ""}
       </div>
-    </a>`;
+    </a></div>`;
   }
 
   const categories = () => [...new Set(["Women", "Men", "Accessories", "Handmade", ...state.products.map((p) => p.category)])];
@@ -238,6 +268,7 @@
     $("#langSel").value = state.lang;
     $("#langSel").setAttribute("aria-label", t("lang.label"));
     $("#cartBtn").setAttribute("aria-label", t("cart"));
+    $("#wishBtn").setAttribute("aria-label", t("wish.title"));
     $("#searchBtn").setAttribute("aria-label", t("search.label"));
     $("#searchLabel").textContent = t("search.label");
     $("#searchInput").placeholder = t("search.placeholder");
@@ -303,6 +334,7 @@
         ${payIcons()}
       </div>`;
     renderCartCount();
+    renderWishCount();
     renderDrawer();
     if (!$("#promo").hidden) renderPromo();
   }
@@ -584,6 +616,7 @@
               <li>✦ ${hasTag(p, "made-to-order") ? t("hm.fact.mto") : t("hm.fact.ready")}</li>
             </ul>` : ""}
             <button class="btn btn-block" id="addBtn"></button>
+            <button type="button" class="btn btn-ghost btn-block wish-pdp ${inWish(p.handle) ? "on" : ""}" data-wish="${esc(p.handle)}" aria-pressed="${inWish(p.handle)}">${HEART}<span>${wishLabel(p.handle)}</span></button>
             <p class="muted small">${t("pdp.shipping", { amount: money(cfg.freeShippingThreshold) })}</p>
             <details open><summary>${t("pdp.details")}</summary><p>${esc(p.description)}</p></details>
             ${payIcons()}
@@ -817,6 +850,17 @@
       </section>
     </div>`;
 
+  function viewWishlist() {
+    const list = state.wish.map((h) => state.products.find((p) => p.handle === h)).filter(Boolean);
+    return `
+      <section class="section">
+        <h1 class="page-title">${t("wish.title")}</h1>
+        ${list.length ? `<p class="muted small">${t("shop.count", { n: list.length })}</p>
+        <div class="grid">${list.map(card).join("")}</div>` : `<p class="shop-empty">${t("wish.empty")}</p>
+        <a class="btn" href="#/shop">${t("about.cta")}</a>`}
+      </section>`;
+  }
+
   const viewHelp = () => `
     <section class="section prose">
       <h1 class="page-title">${t("help.title")}</h1>
@@ -857,6 +901,7 @@
     else if (parts[0] === "handmade") html = viewHandmade(params);
     else if (parts[0] === "about") html = viewAbout();
     else if (parts[0] === "help") html = viewHelp();
+    else if (parts[0] === "wishlist") html = viewWishlist();
     else html = viewNotFound();
 
     app.innerHTML = html;
@@ -910,6 +955,10 @@
   });
   $("#cartBtn").addEventListener("click", () => { renderDrawer(); openDrawer(); });
   $("#overlay").addEventListener("click", closeDrawer);
+  app.addEventListener("click", (e) => {
+    const heart = e.target.closest("[data-wish]");
+    if (heart) toggleWish(heart.dataset.wish);
+  });
   $("#footer").addEventListener("click", (e) => {
     const soon = e.target.closest("[data-social-soon]");
     if (soon) toast(t("social.soon", { name: soon.dataset.socialSoon }));
@@ -992,6 +1041,10 @@
       const ids = new Set(state.products.flatMap((p) => p.variants.map((v) => v.id)));
       state.cart = state.cart.filter((l) => ids.has(l.variantId));
       saveCart();
+      // Quita de la wishlist productos que ya no existen en la tienda
+      state.wish = state.wish.filter((h) => state.products.some((p) => p.handle === h));
+      store.set("alto-wish", state.wish);
+      renderWishCount();
       state.loaded = true;
       state.error = false;
     } catch (e) {
