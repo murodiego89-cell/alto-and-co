@@ -213,6 +213,19 @@
 
   const categories = () => [...new Set(["Women", "Men", "Accessories", "Handmade", ...state.products.map((p) => p.category)])];
 
+  const SOCIALS = [
+    ["instagram", "Instagram", `<rect x="3.5" y="3.5" width="17" height="17" rx="5" fill="none" stroke="currentColor" stroke-width="1.8"/><circle cx="12" cy="12" r="4" fill="none" stroke="currentColor" stroke-width="1.8"/><circle cx="17.2" cy="6.8" r="1.2" fill="currentColor"/>`],
+    ["tiktok", "TikTok", `<path fill="currentColor" d="M16.6 2h-3.3v13.6a2.9 2.9 0 1 1-2.1-2.8V9.4a6.3 6.3 0 1 0 5.4 6.2V8.7a8 8 0 0 0 4.4 1.4V6.8a4.6 4.6 0 0 1-4.4-4.8z"/>`],
+    ["facebook", "Facebook", `<path fill="currentColor" transform="translate(.9 -1.5)" d="M14.2 8.6h2.6V5.2c-.5-.1-1.9-.2-3.3-.2-3.2 0-5.2 1.9-5.2 5.3v2.5H5.4v3.7h2.9V22H12v-5.5h3l.5-3.7H12v-2.2c0-1.2.4-2 2.2-2z"/>`],
+  ];
+  const socialLinks = () => SOCIALS.map(([key, name, icon]) => {
+    const url = (cfg.social || {})[key];
+    const svg = `<svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true">${icon}</svg>`;
+    return url
+      ? `<a class="social-btn" href="${esc(url)}" target="_blank" rel="noopener noreferrer" aria-label="${name}">${svg}</a>`
+      : `<button type="button" class="social-btn" data-social-soon="${name}" aria-label="${name}">${svg}</button>`;
+  }).join("");
+
   function renderChrome() {
     document.documentElement.lang = LOCALES[state.lang];
     const wholeDollars = new Intl.NumberFormat(LOCALES[state.lang],
@@ -258,6 +271,8 @@
       <div class="footer-inner">
         <div class="footer-brand">
           <a class="logo" href="#/" aria-label="Alto & Co."><img src="assets/logo-light.png" alt="Alto & Co." width="800" height="158"></a>
+          <p class="social-title">${t("footer.follow")}</p>
+          <div class="social">${socialLinks()}</div>
           ${cfg.signupEndpoint ? `<p class="small">${t("footer.news")}</p>
           <form class="news" id="newsForm">
             <label class="sr-only" for="newsEmail">${t("footer.email")}</label>
@@ -854,6 +869,10 @@
   });
   $("#cartBtn").addEventListener("click", () => { renderDrawer(); openDrawer(); });
   $("#overlay").addEventListener("click", closeDrawer);
+  $("#footer").addEventListener("click", (e) => {
+    const soon = e.target.closest("[data-social-soon]");
+    if (soon) toast(t("social.soon", { name: soon.dataset.socialSoon }));
+  });
   document.addEventListener("keydown", (e) => {
     if (e.key !== "Escape") return;
     closeDrawer();

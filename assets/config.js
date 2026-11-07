@@ -33,6 +33,14 @@ window.ALTO_CONFIG = {
   // Video del banner de Handmade: sin sonido, sin controles y en loop continuo.
   handmadeVideo: { src: "assets/video/handmade-banner.mp4", poster: "assets/video/handmade-banner.jpg" },
 
+  // Redes sociales del pie de página: pega aquí el link completo de cada perfil.
+  // Mientras esté vacío, el botón se ve pero solo avisa que llegará pronto.
+  social: {
+    instagram: "", // https://www.instagram.com/tu-usuario
+    tiktok: "",    // https://www.tiktok.com/@tu-usuario
+    facebook: "",  // https://www.facebook.com/tu-pagina
+  },
+
   // Enlace del formulario de Formspree (https://formspree.io/f/xxxx).
   // Mientras esté vacío, los formularios de correo no se muestran.
   signupEndpoint: "",
