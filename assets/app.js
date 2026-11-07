@@ -714,7 +714,10 @@
       </section>
 
       <section class="ab-siblings">
-        <div class="ab-paper"><div class="rv-clip"><img src="assets/img/hermanos-dibujo.jpg" alt="${t("about.siblings.alt")}" width="1486" height="1059" loading="lazy"></div></div>
+        <figure>
+          <div class="ab-paper"><div class="rv-clip"><img src="assets/img/hermanos-dibujo.jpg" alt="${t("about.siblings.alt")}" width="1486" height="1059" loading="lazy"></div></div>
+          <figcaption>${t("about.siblings.caption")}</figcaption>
+        </figure>
         <div class="ab-copy">
           <h2 class="rv">${t("about.siblings.title")}</h2>
           <p class="rv" style="--d:.1s">${t("about.siblings.p1")}</p>
