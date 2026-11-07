@@ -129,6 +129,13 @@ details { border-top: 1px solid var(--line); border-bottom: 1px solid var(--line
 summary { cursor: pointer; font-size: 13px; letter-spacing: .08em; text-transform: uppercase; }
 details p { color: var(--muted); margin: 12px 0 0; }
 
+/* Lupa de producto: solo con mouse */
+.pdp-img { position: relative; }
+.pdp-img > .pdp-lens { position: absolute; top: 0; left: 0; width: 260px; height: 260px; background-color: var(--surface); background-repeat: no-repeat; border: 1px solid var(--bg); box-shadow: 0 8px 26px rgba(42, 29, 22, .34); pointer-events: none; }
+@media (hover: hover) and (pointer: fine) and (min-width: 761px) {
+  .pdp-img:has(img) { cursor: zoom-in; }
+}
+
 /* Medios de pago */
 .pay { margin-top: 18px; }
 .pay-list { list-style: none; padding: 0; margin: 8px 0 0; display: flex; flex-wrap: wrap; gap: 6px; }

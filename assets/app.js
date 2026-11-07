@@ -594,9 +594,50 @@
         <div class="grid">${related.map(card).join("")}</div></section>` : ""}`;
   }
 
+  /* Lupa de la foto de producto: un recuadro sigue al cursor y muestra esa zona ampliada. Solo con mouse en computadora */
+  function mountZoom(mediaEl) {
+    if (!matchMedia("(hover: hover) and (pointer: fine) and (min-width: 761px)").matches) return;
+    const ZOOM = 2.4;
+    const clamp = (n, min, max) => Math.min(Math.max(n, min), max);
+    let frame = null;
+    let lens = null;
+    const hide = () => { lens?.remove(); lens = frame = null; };
+    mediaEl.addEventListener("mousemove", (e) => {
+      const box = e.target.closest(".pdp-img");
+      const img = box && box.querySelector("img");
+      if (!img || !img.naturalWidth) return hide();
+      if (box !== frame) {
+        hide();
+        frame = box;
+        lens = document.createElement("div");
+        lens.className = "pdp-lens";
+        lens.setAttribute("aria-hidden", "true");
+        // En Shopify pide una versión más grande de la foto para que la lupa se vea nítida
+        lens.style.backgroundImage = `url("${img.currentSrc.replace("width=900", "width=2000")}")`;
+        box.append(lens);
+      }
+      const r = box.getBoundingClientRect();
+      const size = lens.offsetWidth;
+      // La foto va con object-fit: cover y centrada: calcula su tamaño real para que la lupa coincida
+      const scale = Math.max(r.width / img.naturalWidth, r.height / img.naturalHeight);
+      const w = img.naturalWidth * scale;
+      const h = img.naturalHeight * scale;
+      const left = clamp(e.clientX - r.left - size / 2, 0, r.width - size);
+      const top = clamp(e.clientY - r.top - size / 2, 0, r.height - size);
+      // Amplía lo que hay bajo el centro del recuadro, que nunca sale de la foto
+      const x = left + size / 2;
+      const y = top + size / 2;
+      lens.style.transform = `translate(${left}px, ${top}px)`;
+      lens.style.backgroundSize = `${w * ZOOM}px ${h * ZOOM}px`;
+      lens.style.backgroundPosition = `${size / 2 - (x + (w - r.width) / 2) * ZOOM}px ${size / 2 - (y + (h - r.height) / 2) * ZOOM}px`;
+    });
+    mediaEl.addEventListener("mouseleave", hide);
+  }
+
   function mountProduct(p, optionNames, sel) {
     const mediaEl = $("#pdpMedia");
     if (!mediaEl) return;
+    mountZoom(mediaEl);
     const colorKey = optionNames.find((n) => /^(colou?r|couleur)$/i.test(n));
     const values = (name) => [...new Set(p.variants.map((v) => v.options[name]))];
     const match = () => p.variants.find((v) => optionNames.every((n) => v.options[n] === sel[n]));
